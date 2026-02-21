@@ -11,6 +11,16 @@ def _now() -> str:
     return datetime.now().isoformat()
 
 
+def _validate_due_date(due_date: Optional[str]) -> None:
+    """Validate that due_date is in YYYY-MM-DD format."""
+    if due_date is None:
+        return
+    try:
+        datetime.strptime(due_date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError(f"due_date must be in YYYY-MM-DD format, got: '{due_date}'")
+
+
 def create_task(
     title: str,
     description: str = "",
@@ -23,6 +33,7 @@ def create_task(
         raise ValueError("Task title cannot be empty.")
     if priority not in VALID_PRIORITIES:
         raise ValueError(f"Priority must be one of {VALID_PRIORITIES}.")
+    _validate_due_date(due_date)
 
     task = {
         "id": str(uuid.uuid4()),
@@ -66,6 +77,8 @@ def update_task(task_id: str, **fields) -> Dict[str, Any]:
                     raise ValueError(f"Priority must be one of {VALID_PRIORITIES}.")
                 if key == "status" and value not in VALID_STATUSES:
                     raise ValueError(f"Status must be one of {VALID_STATUSES}.")
+                if key == "due_date":
+                    _validate_due_date(value)
                 task[key] = value
             task["updated_at"] = _now()
             save_tasks(tasks)
