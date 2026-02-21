@@ -8,8 +8,7 @@ import os, sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from app import task_manager
-from app import ai_agent
+from app import task_manager, ai_agent
 
 app = Flask(__name__, static_folder="web")
 
