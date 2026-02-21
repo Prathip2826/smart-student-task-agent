@@ -47,6 +47,81 @@ This project is built to gain practical experience in frontend development and b
 
 ---
 
+## Features
+
+- **Add tasks** with title, subject, description, due date, and priority
+- **List & filter** tasks by status, priority, or subject
+- **Update** any task field (title, status, priority, due date, etc.)
+- **Delete** tasks you no longer need
+- **Upcoming tasks** — see what's due in the next 7 days
+- **Summary** — quick overview of all tasks by status and priority
+- **Persistent storage** via a local `data/tasks.json` file
+
+---
+
+## Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/your-username/smart-student-task-agent.git
+cd smart-student-task-agent
+
+# (Optional) Create a virtual environment
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## Usage
+
+```bash
+python -m app.main
+```
+
+You'll see an interactive menu:
+
+```
+╔══════════════════════════════════╗
+║   Smart Student Task Agent 📚   ║
+╠══════════════════════════════════╣
+║  1. Add task                     ║
+║  2. List all tasks               ║
+║  3. Filter tasks                 ║
+║  4. Update task                  ║
+║  5. Delete task                  ║
+║  6. Upcoming (next 7 days)       ║
+║  7. Summary                      ║
+║  0. Exit                         ║
+╚══════════════════════════════════╝
+```
+
+---
+
+## Task Fields
+
+| Field       | Description                                      |
+|-------------|--------------------------------------------------|
+| `title`     | Short name of the task (required)               |
+| `subject`   | Course or subject (e.g. Math, History)          |
+| `description` | Extra notes or details                        |
+| `due_date`  | ISO format date: `YYYY-MM-DD`                   |
+| `priority`  | `low`, `medium`, or `high`                      |
+| `status`    | `pending`, `in-progress`, or `completed`        |
+
+---
+
+## Running Tests
+
+```bash
+pytest tests/
+```
+
+---
+
 ## 🎯 Purpose
 This project is created for learning:
 - Frontend development
@@ -56,5 +131,26 @@ This project is created for learning:
 
 ---
 
-## 📅 Project Status
-🟢 Week 1 – UI Development Started
+## Project Structure
+
+```
+smart-student-task-agent/
+├── app/
+│   ├── __init__.py       # Package init
+│   ├── main.py           # CLI entry point
+│   ├── task_manager.py   # Business logic (CRUD + filtering)
+│   └── storage.py        # JSON file persistence
+├── data/
+│   └── tasks.json        # Local task storage (auto-created)
+├── tests/
+│   └── test_task_manager.py
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+---
+
+## License
+
+MIT
