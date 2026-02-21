@@ -1,120 +1,82 @@
-# smart-student-task-agent
 # 🤖 Smart Student Task Agent
 
-A simple Agentic AI based web application built using HTML, CSS, and JavaScript.
+An AI-powered student task manager built by **Prathip Munusamy** & **Sujitha Shanmugam** as a hands-on project to learn frontend development, agentic AI logic, and version control.
+
+---
 
 ## 📌 Project Description
+
 Smart Student Task Agent helps students:
 - Add assignments with deadline and priority
-- Automatically sort tasks
-- Highlight urgent tasks
+- Automatically sort and filter tasks
+- Highlight urgent and overdue tasks
+- Chat with an AI study assistant (StudyBot)
 - Generate daily focus suggestions
 - Track completed tasks
-
-This project is built to gain practical experience in frontend development and basic agent-based decision logic.
 
 ---
 
 ## 🛠 Tech Stack
-- HTML
-- CSS
-- JavaScript (Vanilla JS)
-- Git & GitHub (for collaboration)
+
+- **Frontend** — HTML, CSS, JavaScript (Vanilla JS)
+- **Backend** — Python, Flask
+- **AI** — Anthropic Claude API (StudyBot)
+- **Storage** — JSON file (local persistence)
+- **Version Control** — Git & GitHub
 
 ---
 
-## 🚀 Features (Phase 1)
-- Add new task
-- Set deadline
-- Set priority (Low / Medium / High)
-- Display task list
-- Delete task
-- Mark task as completed
+## 🚀 Features
+
+- Add tasks with title, subject, description, due date, and priority
+- List & filter tasks by status, priority, or subject
+- Update any task field (title, status, priority, due date, etc.)
+- Delete tasks you no longer need
+- Upcoming tasks — see what's due in the next 7 days
+- Summary — quick overview of all tasks by status and priority
+- **StudyBot AI** — chat assistant powered by Claude
+- **AI Priority Suggestion** — let AI recommend the right priority
+- **AI Subtask Generator** — break assignments into manageable steps
+- Persistent storage via `data/tasks.json`
 
 ---
 
-## 🔮 Future Improvements (Phase 2 & 3)
-- Auto study plan generation
-- Productivity score
-- LocalStorage integration
-- AI-based suggestions (API integration)
-
----
-
-## 👩‍💻👨‍💻 Team Members
-- Prathip Munusamy
-- Sujitha Shanmugam
-
----
-
-## Features
-
-- **Add tasks** with title, subject, description, due date, and priority
-- **List & filter** tasks by status, priority, or subject
-- **Update** any task field (title, status, priority, due date, etc.)
-- **Delete** tasks you no longer need
-- **Upcoming tasks** — see what's due in the next 7 days
-- **Summary** — quick overview of all tasks by status and priority
-- **Persistent storage** via a local `data/tasks.json` file
-
----
-
-## Setup
+## ⚙️ Setup
 
 ```bash
 # Clone the repo
 git clone https://github.com/your-username/smart-student-task-agent.git
 cd smart-student-task-agent
 
-# (Optional) Create a virtual environment
+# Create a virtual environment (optional but recommended)
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Set your Anthropic API key
+export ANTHROPIC_API_KEY=your_key_here
 ```
 
 ---
 
-## Usage
+## 🌐 Run the Web App
+
+```bash
+python server.py
+# Open http://localhost:5000
+```
+
+## 🖥 Run the CLI (optional)
 
 ```bash
 python -m app.main
 ```
 
-You'll see an interactive menu:
-
-```
-╔══════════════════════════════════╗
-║   Smart Student Task Agent 📚   ║
-╠══════════════════════════════════╣
-║  1. Add task                     ║
-║  2. List all tasks               ║
-║  3. Filter tasks                 ║
-║  4. Update task                  ║
-║  5. Delete task                  ║
-║  6. Upcoming (next 7 days)       ║
-║  7. Summary                      ║
-║  0. Exit                         ║
-╚══════════════════════════════════╝
-```
-
 ---
 
-## Task Fields
-
-| Field       | Description                                      |
-|-------------|--------------------------------------------------|
-| `title`     | Short name of the task (required)               |
-| `subject`   | Course or subject (e.g. Math, History)          |
-| `description` | Extra notes or details                        |
-| `due_date`  | ISO format date: `YYYY-MM-DD`                   |
-| `priority`  | `low`, `medium`, or `high`                      |
-| `status`    | `pending`, `in-progress`, or `completed`        |
-
----
-
-## Running Tests
+## 🧪 Running Tests
 
 ```bash
 pytest tests/
@@ -122,28 +84,26 @@ pytest tests/
 
 ---
 
-## 🎯 Purpose
-This project is created for learning:
-- Frontend development
-- DOM manipulation
-- Basic Agentic AI logic
-- Version control using GitHub
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 smart-student-task-agent/
 ├── app/
-│   ├── __init__.py       # Package init
-│   ├── main.py           # CLI entry point
-│   ├── task_manager.py   # Business logic (CRUD + filtering)
-│   └── storage.py        # JSON file persistence
+│   ├── __init__.py         # Package init
+│   ├── main.py             # CLI entry point
+│   ├── task_manager.py     # Business logic (CRUD + filtering + validation)
+│   ├── storage.py          # JSON file persistence
+│   └── ai_agent.py         # Claude API integration
+├── web/
+│   └── index.html          # Full web UI
 ├── data/
-│   └── tasks.json        # Local task storage (auto-created)
+│   ├── tasks.json          # Local task storage (auto-created)
+│   └── .gitkeep
 ├── tests/
+│   ├── __init__.py
 │   └── test_task_manager.py
+├── server.py               # Flask web server + REST API
+├── pyproject.toml
 ├── requirements.txt
 ├── README.md
 └── .gitignore
@@ -151,8 +111,24 @@ smart-student-task-agent/
 
 ---
 
-## License
+## 👩‍💻 Team Members
+
+| Name | GitHub |
+|------|--------|
+| Prathip Munusamy | @Prathip2826 |
+| Sujitha Shanmugam | @suji2826 |
+
+---
+
+## 🔮 Future Improvements
+
+- Auto study plan generation
+- Productivity score & streaks
+- Mobile-responsive design
+- Notifications & reminders
+
+---
+
+## 📄 License
 
 MIT
-
-
