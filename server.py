@@ -11,7 +11,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 import app.task_manager as task_manager
 import app.ai_agent as ai_agent
 
-app = Flask(__name__, static_folder="web")
+application = Flask(__name__, static_folder="web")
+app = application
 
 
 # ── Static Files ──────────────────────────────────────────────
@@ -121,5 +122,8 @@ def generate_subtasks(task_id):
 
 
 if __name__ == "__main__":
-    print("🚀 Smart Student Task Agent running at http://localhost:5000")
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("RENDER") is None
+    print(f"🚀 Smart Student Task Agent running at http://localhost:{port}")
+    app.run(debug=debug, host="0.0.0.0", port=port)
+    
