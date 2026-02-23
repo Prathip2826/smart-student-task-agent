@@ -1,7 +1,8 @@
 """
-AI Agent — uses Google Gemini API (free tier) for smart student task assistance.
-Get your free API key at: https://aistudio.google.com/apikey
-Set environment variable: GEMINI_API_KEY
+AI Agent — uses Groq API (free tier) for smart student task assistance.
+Get your free API key at: https://console.groq.com
+Set environment variable: GROQ_API_KEY
+Free tier: 14,400 requests/day — plenty for StudyBot!
 """
 
 import os
@@ -10,8 +11,9 @@ import urllib.request
 import urllib.error
 from typing import Optional
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "llama-3.1-8b-instant"  # Free, fast, great for chat
 
 SYSTEM_PROMPT = """You are StudyBot, an encouraging and intelligent AI assistant built into a student task manager.
 You help students stay organised, manage their workload, and succeed academically.
@@ -29,76 +31,84 @@ Personality: warm, encouraging, practical. Use light emojis occasionally. Keep r
 Never be preachy. Students are busy — get to the point."""
 
 
-def _gemini_request(contents: list, max_tokens: int = 1024) -> str:
-    """Make a raw request to the Gemini API using only stdlib."""
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY environment variable is not set.")
+def _groq_request(messages: list, max_tokens: int = 1024) -> str:
+    """Make a raw request to the Groq API using only stdlib."""
+    if not GROQ_API_KEY:
+        raise ValueError("GROQ_API_KEY environment variable is not set.")
 
     payload = json.dumps({
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-        "contents": contents,
-        "generationConfig": {"maxOutputTokens": max_tokens, "temperature": 0.7}
+        "model": GROQ_MODEL,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": 0.7
     }).encode("utf-8")
 
     req = urllib.request.Request(
-        f"{GEMINI_URL}?key={GEMINI_API_KEY}",
+        GROQ_URL,
         data=payload,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {GROQ_API_KEY}"
+        },
         method="POST"
     )
 
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            return data["candidates"][0]["content"]["parts"][0]["text"]
+            return data["choices"][0]["message"]["content"]
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8")
-        raise RuntimeError(f"Gemini API error {e.code}: {body}")
+        raise RuntimeError(f"Groq API error {e.code}: {body}")
 
 
 def ask_ai(user_message: str, tasks: list, conversation_history: Optional[list] = None) -> str:
-    """Send a message to Gemini with the current task list as context."""
+    """Send a message to Groq with the current task list as context."""
     if conversation_history is None:
         conversation_history = []
 
     task_context = f"\n\n--- STUDENT'S CURRENT TASKS ---\n{json.dumps(tasks, indent=2)}\n---"
 
-    contents = []
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     for msg in conversation_history[-10:]:
-        role = "model" if msg["role"] == "assistant" else "user"
-        contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": user_message + task_context})
 
-    contents.append({"role": "user", "parts": [{"text": user_message + task_context}]})
-
-    return _gemini_request(contents, max_tokens=1024)
+    return _groq_request(messages, max_tokens=1024)
 
 
 def suggest_priority(task: dict) -> str:
-    """Ask Gemini to suggest a priority level for a single task."""
+    """Ask Groq to suggest a priority level for a single task."""
     prompt = (
         f"For this student task: title='{task['title']}', subject='{task.get('subject','')}', "
         f"due='{task.get('due_date', 'no deadline')}', description='{task.get('description', '')}'. "
         f"Reply with ONLY one word: low, medium, or high."
     )
-    contents = [{"role": "user", "parts": [{"text": prompt}]}]
+    messages = [
+        {"role": "system", "content": "You are a task prioritisation assistant. Reply with only one word: low, medium, or high."},
+        {"role": "user", "content": prompt}
+    ]
     try:
-        word = _gemini_request(contents, max_tokens=10).strip().lower()
+        word = _groq_request(messages, max_tokens=10).strip().lower()
         return word if word in ("low", "medium", "high") else "medium"
     except Exception:
         return "medium"
 
 
 def generate_subtasks(task: dict) -> list:
-    """Ask Gemini to break a task into 3-5 subtasks."""
+    """Ask Groq to break a task into 3-5 subtasks."""
     prompt = (
         f"Break this student task into 3-5 concrete subtasks.\n"
         f"Task: {task['title']}\nSubject: {task.get('subject','')}\n"
         f"Notes: {task.get('description', '')}\n"
         f"Reply ONLY with a JSON array of short strings, no explanation, no markdown."
     )
-    contents = [{"role": "user", "parts": [{"text": prompt}]}]
+    messages = [
+        {"role": "system", "content": "You are a study planning assistant. Reply only with a JSON array of strings."},
+        {"role": "user", "content": prompt}
+    ]
     try:
-        text = _gemini_request(contents, max_tokens=300).strip()
+        text = _groq_request(messages, max_tokens=300).strip()
         if text.startswith("```"):
             text = text.split("```")[1]
             if text.startswith("json"):
