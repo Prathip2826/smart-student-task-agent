@@ -1,8 +1,8 @@
 """
-AI Agent — uses Groq API (free tier) for smart student task assistance.
-Get your free API key at: https://console.groq.com
-Set environment variable: GROQ_API_KEY
-Free tier: 14,400 requests/day — plenty for StudyBot!
+AI Agent — uses OpenRouter API (free tier) for smart student task assistance.
+Get your free API key at: https://openrouter.ai/keys
+Set environment variable: OPENROUTER_API_KEY
+Free tier: uses free models — no credit card needed!
 """
 
 import os
@@ -11,9 +11,9 @@ import urllib.request
 import urllib.error
 from typing import Optional
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama-3.1-8b-instant"  # Free, fast, great for chat
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free"
 
 SYSTEM_PROMPT = """You are StudyBot, an encouraging and intelligent AI assistant built into a student task manager.
 You help students stay organised, manage their workload, and succeed academically.
@@ -31,24 +31,26 @@ Personality: warm, encouraging, practical. Use light emojis occasionally. Keep r
 Never be preachy. Students are busy — get to the point."""
 
 
-def _groq_request(messages: list, max_tokens: int = 1024) -> str:
-    """Make a raw request to the Groq API using only stdlib."""
-    if not GROQ_API_KEY:
-        raise ValueError("GROQ_API_KEY environment variable is not set.")
+def _openrouter_request(messages: list, max_tokens: int = 1024) -> str:
+    """Make a request to OpenRouter API using only stdlib."""
+    if not OPENROUTER_API_KEY:
+        raise ValueError("OPENROUTER_API_KEY environment variable is not set.")
 
     payload = json.dumps({
-        "model": GROQ_MODEL,
+        "model": OPENROUTER_MODEL,
         "messages": messages,
         "max_tokens": max_tokens,
         "temperature": 0.7
     }).encode("utf-8")
 
     req = urllib.request.Request(
-        GROQ_URL,
+        OPENROUTER_URL,
         data=payload,
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {GROQ_API_KEY}"
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "HTTP-Referer": "https://smart-student-task-agent.onrender.com",
+            "X-Title": "StudyBot Smart Task Agent"
         },
         method="POST"
     )
@@ -59,11 +61,11 @@ def _groq_request(messages: list, max_tokens: int = 1024) -> str:
             return data["choices"][0]["message"]["content"]
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8")
-        raise RuntimeError(f"Groq API error {e.code}: {body}")
+        raise RuntimeError(f"OpenRouter API error {e.code}: {body}")
 
 
 def ask_ai(user_message: str, tasks: list, conversation_history: Optional[list] = None) -> str:
-    """Send a message to Groq with the current task list as context."""
+    """Send a message to OpenRouter with the current task list as context."""
     if conversation_history is None:
         conversation_history = []
 
@@ -74,11 +76,11 @@ def ask_ai(user_message: str, tasks: list, conversation_history: Optional[list] 
         messages.append({"role": msg["role"], "content": msg["content"]})
     messages.append({"role": "user", "content": user_message + task_context})
 
-    return _groq_request(messages, max_tokens=1024)
+    return _openrouter_request(messages, max_tokens=1024)
 
 
 def suggest_priority(task: dict) -> str:
-    """Ask Groq to suggest a priority level for a single task."""
+    """Ask OpenRouter to suggest a priority level for a single task."""
     prompt = (
         f"For this student task: title='{task['title']}', subject='{task.get('subject','')}', "
         f"due='{task.get('due_date', 'no deadline')}', description='{task.get('description', '')}'. "
@@ -89,14 +91,14 @@ def suggest_priority(task: dict) -> str:
         {"role": "user", "content": prompt}
     ]
     try:
-        word = _groq_request(messages, max_tokens=10).strip().lower()
+        word = _openrouter_request(messages, max_tokens=10).strip().lower()
         return word if word in ("low", "medium", "high") else "medium"
     except Exception:
         return "medium"
 
 
 def generate_subtasks(task: dict) -> list:
-    """Ask Groq to break a task into 3-5 subtasks."""
+    """Ask OpenRouter to break a task into 3-5 subtasks."""
     prompt = (
         f"Break this student task into 3-5 concrete subtasks.\n"
         f"Task: {task['title']}\nSubject: {task.get('subject','')}\n"
@@ -108,7 +110,7 @@ def generate_subtasks(task: dict) -> list:
         {"role": "user", "content": prompt}
     ]
     try:
-        text = _groq_request(messages, max_tokens=300).strip()
+        text = _openrouter_request(messages, max_tokens=300).strip()
         if text.startswith("```"):
             text = text.split("```")[1]
             if text.startswith("json"):
