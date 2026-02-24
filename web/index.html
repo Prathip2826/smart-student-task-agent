@@ -29,32 +29,35 @@ html{scroll-behavior:smooth;font-size:16px}
 }
 [data-theme="light"]{
   /* Backgrounds */
-  --bg:#f6f8fc;
-  --bg2:#eef1f8;
+  --bg:#f8faff;
+  --bg2:#f1f4fb;
   --bg3:#ffffff;
-  --bg4:#e6eaf5;
+  --bg4:#e9eefc;
 
   /* Text */
-  --tx:#1a1f36;
-  --tx2:#3a4060;
-  --tx3:#6b7298;
-  --tx4:#9aa1c6;
+  --tx:#111827;
+  --tx2:#374151;
+  --tx3:#6b7280;
+  --tx4:#9ca3af;
 
-  /* Accent (Modern Indigo-Blue) */
-  --acc:#4f63ff;
-  --acc2:#6c7cff;
-  --acc3:#aab4ff;
+  /* Accent (More Vibrant Indigo) */
+  --acc:#4f46e5;
+  --acc2:#6366f1;
+  --acc3:#a5b4fc;
 
   /* Status Colors */
-  --acc-r:#ff5b5b;
+  --acc-r:#ef4444;
   --acc-g:#22c55e;
   --acc-y:#f59e0b;
   --acc-p:#a855f7;
 
   /* UI */
   --card:#ffffff;
-  --border:#e2e6f2;
-  --shadow:0 8px 30px rgba(60,72,100,0.08);
+  --border:#e5e7eb;
+  --shadow:0 10px 40px rgba(79,70,229,0.08);
+
+  /* Glass / subtle highlight */
+  --hover-bg:rgba(79,70,229,0.05);
 
   /* Typography */
   --font:'Cabinet Grotesk',sans-serif;
@@ -62,10 +65,11 @@ html{scroll-behavior:smooth;font-size:16px}
   --font-mono:'DM Mono',monospace;
 
   /* Radius */
-  --radius:12px;
-  --radius-sm:8px;
-  --radius-lg:18px;
+  --radius:14px;
+  --radius-sm:10px;
+  --radius-lg:22px;
 }
+
 [data-theme="aurora"]{
   --bg:#080e1a;--bg2:#0d1525;--bg3:#111d32;--bg4:#1a2a45;
   --tx:#e8f4ff;--tx2:#9ec8f0;--tx3:#4d7aaa;--tx4:#2d4d70;
@@ -718,6 +722,12 @@ code{font-family:var(--font-mono);font-size:0.85em;background:var(--bg4);padding
               <div class="tp-color" style="background:linear-gradient(135deg,#2d5016,#6fa040)" data-theme="paper" onclick="setTheme('paper')" title="Paper"></div>
               <div class="tp-color" style="background:linear-gradient(135deg,#f56ab0,#c45bf5)" data-theme="rose" onclick="setTheme('rose')" title="Rose"></div>
               <div class="tp-color" style="background:linear-gradient(135deg,#42a5f5,#90caf9)" data-theme="slate" onclick="setTheme('slate')" title="Slate"></div>
+              <div class="tp-color"
+     style="background:linear-gradient(135deg,#4f46e5,#a5b4fc)"
+     data-theme="light"
+     onclick="setTheme('light')"
+     title="Light">
+</div>
             </div>
             <div class="tp-label">Font Family</div>
             <div class="tp-fonts">
@@ -725,6 +735,40 @@ code{font-family:var(--font-mono);font-size:0.85em;background:var(--bg4);padding
               <button class="tp-font-btn" data-font="playfair" onclick="setFont('playfair')" style="font-family:'Playfair Display',serif">Playfair Display</button>
               <button class="tp-font-btn" data-font="unbounded" onclick="setFont('unbounded')" style="font-family:'Unbounded',sans-serif">Unbounded</button>
               <button class="tp-font-btn" data-font="mono" onclick="setFont('mono')" style="font-family:'DM Mono',monospace">DM Mono</button>
+              <button class="tp-font-btn"
+        data-font="inter"
+        onclick="setFont('inter')"
+        style="font-family:'Inter',sans-serif">
+  Inter
+</button>
+
+<button class="tp-font-btn"
+        data-font="space"
+        onclick="setFont('space')"
+        style="font-family:'Space Grotesk',sans-serif">
+  Space Grotesk
+</button>
+
+<button class="tp-font-btn"
+        data-font="manrope"
+        onclick="setFont('manrope')"
+        style="font-family:'Manrope',sans-serif">
+  Manrope
+</button>
+
+<button class="tp-font-btn"
+        data-font="orbitron"
+        onclick="setFont('orbitron')"
+        style="font-family:'Orbitron',sans-serif">
+  Orbitron
+</button>
+
+<button class="tp-font-btn"
+        data-font="lora"
+        onclick="setFont('lora')"
+        style="font-family:'Lora',serif">
+  Lora
+</button>
             </div>
           </div>
         </div>
