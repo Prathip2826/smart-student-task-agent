@@ -6,6 +6,7 @@
 <title>StudyBot Pro — Smart Study Companion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,700;1,900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -670,14 +671,124 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
   .sidebar{position:fixed;left:-280px;top:0;height:100vh;width:280px;z-index:200;transition:left .3s cubic-bezier(.4,0,.2,1)}
   .sidebar.open{left:0}.app-body.sb-open .sidebar{left:0}
   .sidebar .sb-logo-txt,.sidebar .sb-lbl,.sidebar .sb-user-info,.sidebar .sb-section-lbl,.sidebar .sb-logout,.sidebar .sb-xp-wrap{opacity:1 !important}
-  .bottom-nav{display:block}.page{padding:18px;padding-bottom:88px}
-  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:68px}
-  .content{padding-top:68px}.land-nav{padding:0 20px}.hero{padding:80px 20px 60px}
-  .hero-stats{gap:28px}.feat-section,.how-section,.testimonials-section,.faq-section{padding:56px 20px}
-  .land-footer{padding:24px;flex-direction:column;gap:8px;text-align:center}
-  .pomo-wrap{max-width:100%}.stats-strip{padding:56px 20px}
+  .bottom-nav{display:block}
+  .page{padding:12px;padding-bottom:90px}
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px}
+  .topbar-title{font-size:1rem}
+  .content{padding-top:60px}
+  .land-nav{padding:0 16px;height:60px}
+  .hero{padding:70px 16px 50px}
+  .hero-stats{gap:20px}
+  .hero-h1{font-size:2.4rem;letter-spacing:-1px}
+  .hero-sub{font-size:.95rem}
+  .btn-hero-prim,.btn-hero-sec{padding:14px 28px;font-size:.95rem}
+  .feat-section,.how-section,.testimonials-section,.faq-section{padding:44px 16px}
+  .land-footer{padding:20px;flex-direction:column;gap:8px;text-align:center}
+  .pomo-wrap{max-width:100%}
+  .stats-strip{padding:44px 16px}
+  .dash-main{grid-template-columns:1fr}
+  .dash-bottom{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .kpi-row{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{padding:14px}
+  .kpi-v{font-size:1.7rem}
+  .card{padding:16px}
+  .page-title{font-size:1.4rem}
+  .page-sub{font-size:.88rem}
+  .modal-box{padding:22px 18px}
+  .auth-card{padding:28px 20px}
+  .pomo-ring-w{width:200px;height:200px}
+  .pomo-svg{width:200px;height:200px}
+  .pomo-t{font-size:3rem}
+  .pomo-modes{flex-wrap:wrap;gap:5px}
+  .pomo-mode-btn{padding:8px 14px;font-size:.8rem}
+  .ai-tools-nav{gap:6px}
+  .ai-tool-tab{padding:7px 13px;font-size:.8rem}
+  .tasks-grid{grid-template-columns:1fr}
+  .notes-layout{grid-template-columns:1fr}
+  .notes-sidebar{position:static;margin-bottom:14px}
+  .quiz-subjects{grid-template-columns:1fr 1fr}
+  .perf-stats{grid-template-columns:1fr 1fr}
+  .goals-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .stats-strip-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .form-row{grid-template-columns:1fr}
+  .user-pill-name{display:none}
+  .tb-ic-btn{width:36px;height:36px}
+  .topbar-hamburger{width:36px;height:36px}
+  #dashXPCard{min-width:unset;width:100%}
+  .dash-greet{flex-direction:column}
+  .music-widget{padding:18px}
+  .pomo-stats{grid-template-columns:repeat(3,1fr);gap:8px}
+  .pomo-stat-v{font-size:1.3rem}
+  .add-form{max-width:100%}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .search-w{min-width:unset}
+  .fc-row{justify-content:flex-start}
+  .hero-btns{flex-direction:column;align-items:center}
+  .result-big{font-size:2.2rem}
+  .quiz-result-score{font-size:3.5rem}
+  .tips-ticker{padding:10px 14px;gap:10px}
 }
-@media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.quiz-subjects{grid-template-columns:1fr 1fr}.perf-stats{grid-template-columns:1fr 1fr}.hero-h1{letter-spacing:-1px}}
+
+@media(max-width:520px){
+  .kpi-row{grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{padding:12px}
+  .kpi-v{font-size:1.5rem}
+  .kpi-ic{width:36px;height:36px;font-size:1rem}
+  .quiz-subjects{grid-template-columns:1fr 1fr}
+  .perf-stats{grid-template-columns:1fr 1fr}
+  .hero-h1{font-size:2rem;letter-spacing:-.5px}
+  .hero-stat-val{font-size:2rem}
+  .steps-grid{grid-template-columns:1fr}
+  .stats-strip-grid{grid-template-columns:1fr 1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .pomo-ring-w{width:180px;height:180px}
+  .pomo-svg{width:180px;height:180px}
+  .pomo-t{font-size:2.6rem}
+  .page{padding:10px;padding-bottom:90px}
+  .card{padding:14px}
+  .modal-box{padding:18px 14px}
+  .auth-card{padding:22px 16px}
+  .auth-title{font-size:1.5rem}
+  .bn-btn{padding:5px 6px;font-size:.54rem}
+  .bn-ic{font-size:1.1rem}
+  .section-h2{font-size:1.6rem}
+  .feat-card{padding:22px 18px}
+  .music-widget{padding:14px}
+  .pomo-tips{padding:14px}
+  #subjectRingRow{grid-template-columns:1fr 1fr 1fr}
+  .badge-card{padding:14px}
+  .badge-ic{font-size:2rem}
+}
+
+@media(max-width:380px){
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .hero-h1{font-size:1.8rem}
+  .pomo-t{font-size:2.2rem}
+  .bn-btn{padding:4px 4px;font-size:.5rem}
+  .page{padding:8px;padding-bottom:88px}
+  .card{padding:12px}
+  .quiz-subjects{grid-template-columns:1fr}
+  .pomo-ctrls{gap:12px}
+  .pomo-btn-main{width:60px;height:60px;font-size:1.4rem}
+  .pomo-btn-sec{width:46px;height:46px}
+  #subjectRingRow{grid-template-columns:1fr 1fr}
+}
+/* ═══ SMART REMINDERS ═══ */
+.reminder-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:18px;display:flex;align-items:flex-start;gap:13px;transition:all .25s;margin-bottom:11px}
+.reminder-card:hover{box-shadow:var(--shadow);transform:translateX(4px)}
+.reminder-card.urgent{border-color:var(--red-border);background:var(--red-bg)}
+.reminder-card.soon{border-color:var(--amber-border);background:var(--amber-bg)}
+.reminder-card.normal{border-color:var(--green-border);background:var(--green-bg)}
+.reminder-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.reminder-title{font-weight:800;font-size:.93rem;color:var(--tx);margin-bottom:3px}
+.reminder-sub{font-size:.8rem;color:var(--tx3);line-height:1.5}
+.reminder-time{font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:100px;flex-shrink:0;margin-left:auto}
+.rm-bell{animation:bounce 2s ease infinite}
 </style>
 </head>
 <body>
@@ -902,7 +1013,9 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
         <div class="sb-section">
           <div class="sb-section-lbl">Manage</div>
           <button class="sb-btn" data-pg="add" onclick="navigate('add')"><span class="sb-ic">➕</span><span class="sb-lbl">Add Task</span></button>
-          <button class="sb-btn" data-pg="account" onclick="navigate('account')"><span class="sb-ic">⚙️</span><span class="sb-lbl">Account</span></button>
+         <button class="sb-btn" data-pg="account" onclick="navigate('account')"><span class="sb-ic">⚙️</span><span class="sb-lbl">Account</span></button>
+         <button class="sb-btn" data-pg="report" onclick="navigate('report')"><span class="sb-ic">📊</span><span class="sb-lbl">Progress Report</span></button>
+<button class="sb-btn" data-pg="reminders" onclick="navigate('reminders')"><span class="sb-ic">🔔</span><span class="sb-lbl">Reminders</span><span class="sb-badge" id="reminderBadge" style="display:none">!</span></button>
         </div>
       </div>
       <div class="sb-bottom">
@@ -1461,6 +1574,258 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
         </div>
       </div>
 
+      <!-- SMART REMINDERS PAGE -->
+<div class="page" id="remindersPage">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:6px">
+    <div>
+      <div class="page-title">Smart Reminders 🔔</div>
+      <div class="page-sub">Stay on top of deadlines, streaks & study goals</div>
+    </div>
+    <button class="btn btn-p" onclick="openAddReminderModal()">+ New Reminder</button>
+  </div>
+
+  <!-- PERMISSION BANNER -->
+  <div id="notifPermBanner" style="display:none;background:linear-gradient(135deg,var(--acc-bg),var(--purple-bg));border:1.5px solid rgba(61,90,254,.25);border-radius:var(--r);padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="font-size:1.8rem">🔔</div>
+    <div style="flex:1">
+      <div style="font-weight:800;font-size:.95rem;color:var(--tx);margin-bottom:3px">Enable Browser Notifications</div>
+      <div style="font-size:.84rem;color:var(--tx3)">Get notified about deadlines and study reminders even when the app is in background.</div>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="requestNotifPermission()">Enable Now →</button>
+  </div>
+
+  <!-- AUTO REMINDERS SECTION -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="c-hd">
+      <div><div class="c-title">⚡ Auto Smart Reminders</div><div class="c-sub">Automatically generated based on your tasks & habits</div></div>
+      <button class="btn btn-sm btn-g" onclick="refreshAutoReminders()">↺ Refresh</button>
+    </div>
+    <div id="autoRemindersGrid"></div>
+  </div>
+
+  <!-- CUSTOM REMINDERS -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="c-hd">
+      <div><div class="c-title">📌 My Custom Reminders</div></div>
+      <div id="customReminderCount" style="font-size:.82rem;color:var(--tx3);font-weight:800"></div>
+    </div>
+    <div id="customRemindersGrid"></div>
+  </div>
+
+  <!-- REMINDER SETTINGS -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="c-hd"><div class="c-title">⚙️ Reminder Settings</div></div>
+    <div style="display:flex;flex-direction:column;gap:0">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:700;font-size:.92rem;color:var(--tx)">Overdue Task Alerts</div>
+          <div style="font-size:.78rem;color:var(--tx3)">Notify when tasks become overdue</div>
+        </div>
+        <div class="toggle-sw on" id="rm-overdue" onclick="toggleRmSetting('overdue',this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:700;font-size:.92rem;color:var(--tx)">Streak Break Warning</div>
+          <div style="font-size:.78rem;color:var(--tx3)">Alert when you haven't studied today</div>
+        </div>
+        <div class="toggle-sw on" id="rm-streak" onclick="toggleRmSetting('streak',this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:700;font-size:.92rem;color:var(--tx)">Flashcard Due Reminder</div>
+          <div style="font-size:.78rem;color:var(--tx3)">Remind when cards are due for review</div>
+        </div>
+        <div class="toggle-sw on" id="rm-flash" onclick="toggleRmSetting('flash',this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:700;font-size:.92rem;color:var(--tx)">Daily Challenge Reminder</div>
+          <div style="font-size:.78rem;color:var(--tx3)">Remind to complete daily challenge</div>
+        </div>
+        <div class="toggle-sw on" id="rm-daily" onclick="toggleRmSetting('daily',this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0">
+        <div>
+          <div style="font-weight:700;font-size:.92rem;color:var(--tx)">Deadline Approaching (24h)</div>
+          <div style="font-size:.78rem;color:var(--tx3)">Alert 24 hours before task due date</div>
+        </div>
+        <div class="toggle-sw on" id="rm-deadline" onclick="toggleRmSetting('deadline',this)"><div class="toggle-knob"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REMINDER HISTORY -->
+  <div class="card">
+    <div class="c-hd"><div class="c-title">📋 Reminder History</div><button class="btn btn-sm btn-r" onclick="clearReminderHistory()">Clear</button></div>
+    <div id="reminderHistory"></div>
+  </div>
+</div>
+
+<!-- ADD REMINDER MODAL -->
+<div class="modal-ov" id="addReminderModal" onclick="if(event.target===this)closeModal('addReminderModal')">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-hd">
+      <div class="modal-title">New Custom Reminder</div>
+      <button class="modal-cls" onclick="closeModal('addReminderModal')">✕</button>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Reminder Title</label>
+      <input type="text" id="rm-title" class="form-inp" placeholder="e.g. Study Physics Chapter 5"/>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Message</label>
+      <textarea id="rm-msg" class="form-ta" style="min-height:75px" placeholder="e.g. Focus on wave equations and practice 10 problems"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-grp">
+        <label class="form-lbl">Date</label>
+        <input type="date" id="rm-date" class="form-inp"/>
+      </div>
+      <div class="form-grp">
+        <label class="form-lbl">Time</label>
+        <input type="time" id="rm-time" class="form-inp" value="08:00"/>
+      </div>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Type</label>
+      <select id="rm-type" class="form-sel">
+        <option value="study">📚 Study Reminder</option>
+        <option value="deadline">⏰ Deadline Alert</option>
+        <option value="quiz">🧠 Quiz Reminder</option>
+        <option value="break">☕ Break Reminder</option>
+        <option value="custom">📌 Custom</option>
+      </select>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Repeat</label>
+      <select id="rm-repeat" class="form-sel">
+        <option value="once">Once</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+      </select>
+    </div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:6px" onclick="saveCustomReminder()">🔔 Set Reminder</button>
+  </div>
+</div>
+
+      <!-- PROGRESS REPORT PAGE -->
+<div class="page" id="reportPage">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:6px">
+    <div>
+      <div class="page-title">Progress Report 📊</div>
+      <div class="page-sub">Your complete academic performance summary</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="shareReport()">🔗 Share</button>
+      <button class="btn btn-p" onclick="downloadPDF()">⬇️ Download PDF</button>
+    </div>
+  </div>
+
+  <!-- REPORT PERIOD SELECTOR -->
+  <div style="display:flex;gap:9px;margin-bottom:22px;flex-wrap:wrap">
+    <button class="fc active" id="rp-week" onclick="setReportPeriod('week',this)">This Week</button>
+    <button class="fc" id="rp-month" onclick="setReportPeriod('month',this)">This Month</button>
+    <button class="fc" id="rp-all" onclick="setReportPeriod('all',this)">All Time</button>
+  </div>
+
+  <!-- REPORT CARD — PREVIEW (what PDF will look like) -->
+  <div id="reportContent" style="max-width:860px">
+
+    <!-- HEADER CARD -->
+    <div style="background:linear-gradient(135deg,var(--acc),var(--purple));border-radius:var(--r-xl);padding:32px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%"></div>
+      <div style="position:absolute;right:60px;bottom:-60px;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%"></div>
+      <div style="position:relative;z-index:1;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="width:72px;height:72px;border-radius:22px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;flex-shrink:0" id="rpAvatar">?</div>
+        <div style="flex:1">
+          <div style="font-size:1.4rem;font-weight:900;margin-bottom:4px" id="rpName">—</div>
+          <div style="opacity:.8;font-size:.9rem;margin-bottom:8px" id="rpGrade">Student</div>
+          <div style="font-size:.75rem;opacity:.65" id="rpDate">—</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:3rem;font-weight:900;line-height:1" id="rpGradeLetter">—</div>
+          <div style="font-size:.75rem;opacity:.7;margin-top:4px">OVERALL GRADE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI SUMMARY ROW -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px;margin-bottom:18px" id="rpKPIRow"></div>
+
+    <!-- CHARTS ROW -->
+    <div class="grid-2" style="margin-bottom:18px">
+      <div class="card">
+        <div class="c-hd"><div class="c-title">📋 Task Completion</div></div>
+        <div style="position:relative;height:200px"><canvas id="rpDonut"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="c-hd"><div class="c-title">📅 Daily Activity</div></div>
+        <div style="position:relative;height:200px"><canvas id="rpLine"></canvas></div>
+      </div>
+    </div>
+
+    <!-- SUBJECT PERFORMANCE -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="c-hd"><div class="c-title">📚 Subject Performance</div></div>
+      <div id="rpSubjects"></div>
+    </div>
+
+    <!-- QUIZ ANALYSIS -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="c-hd"><div class="c-title">🧠 Quiz Analysis</div></div>
+      <div id="rpQuizAnalysis"></div>
+    </div>
+
+    <!-- STRENGTHS & WEAKNESSES -->
+    <div class="grid-2" style="margin-bottom:18px">
+      <div class="card" style="border:1.5px solid var(--green-border);background:var(--green-bg)">
+        <div class="c-title" style="color:var(--green);margin-bottom:14px">💪 Strengths</div>
+        <div id="rpStrengths"></div>
+      </div>
+      <div class="card" style="border:1.5px solid var(--red-border);background:var(--red-bg)">
+        <div class="c-title" style="color:var(--red);margin-bottom:14px">📈 Areas to Improve</div>
+        <div id="rpWeaknesses"></div>
+      </div>
+    </div>
+
+    <!-- STREAK & CONSISTENCY -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="c-hd"><div class="c-title">🔥 Consistency Report</div></div>
+      <div id="rpConsistency"></div>
+    </div>
+
+    <!-- ACTIVITY HEATMAP -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="c-hd"><div class="c-title">📆 28-Day Activity Heatmap</div></div>
+      <div class="hm-grid" id="rpHeatmap"></div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="card" style="margin-bottom:18px;border:1.5px solid rgba(61,90,254,.25);background:var(--acc-bg)">
+      <div class="c-title" style="margin-bottom:16px">✨ AI Recommendations</div>
+      <div id="rpRecommendations"></div>
+    </div>
+
+    <!-- BADGES EARNED -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="c-hd"><div class="c-title">🎖️ Badges Earned</div><span id="rpBadgeCount" style="font-size:.82rem;color:var(--tx3);font-weight:800"></span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px" id="rpBadges"></div>
+    </div>
+
+    <!-- FOOTER NOTE -->
+    <div style="text-align:center;padding:20px;color:var(--tx4);font-size:.78rem;border-top:1px solid var(--border)">
+      Generated by StudyBot Pro · <span id="rpFooterDate"></span> · Keep studying! 📚
+    </div>
+
+  </div>
+</div>
+
     </main>
   </div>
 </div>
@@ -1474,6 +1839,7 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
     <button class="bn-btn" data-pg="notes" onclick="navigate('notes')"><span class="bn-ic">📝</span>Notes</button>
     <button class="bn-btn" data-pg="pomodoro" onclick="navigate('pomodoro')"><span class="bn-ic">⏱️</span>Timer</button>
     <button class="bn-btn" data-pg="gamify" onclick="navigate('gamify')"><span class="bn-ic">🏆</span>Rank</button>
+<button class="bn-btn" data-pg="report" onclick="navigate('report')"><span class="bn-ic">📊</span>Report</button>
   </div>
 </nav>
 
@@ -1604,9 +1970,169 @@ function handleLogin(){
 }
 function handleLogout(){localStorage.removeItem('sb_sess');cu=null;document.getElementById('app').style.display='none';document.getElementById('app').classList.remove('visible');showLanding();toast('Signed out.','info');}
 
+/* ═══════════════ DAILY LOGIN BONUS ═══════════════ */
+function getLoginStreak(){
+  const logins=G(`logins_${cu?.email||''}`)||{};
+  let streak=0;
+  for(let i=0;i<365;i++){
+    const d=new Date(Date.now()-i*86400000).toDateString();
+    if(logins[d])streak++;
+    else if(i>0)break;
+  }
+  return streak;
+}
+
+function getConsecutiveLoginDays(){
+  const logins=G(`logins_${cu?.email||''}`)||{};
+  return Object.keys(logins).length;
+}
+
+function checkDailyLoginBonus(){
+  if(!cu)return;
+  const key=`logins_${cu.email}`;
+  const logins=G(key)||{};
+  const today=new Date().toDateString();
+
+  // Already claimed today
+  if(logins[today])return;
+
+  // Mark today as logged in
+  logins[today]=Date.now();
+  S(key,logins);
+
+  const streak=getLoginStreak();
+  const totalDays=Object.keys(logins).length;
+
+  // Calculate XP based on streak
+  let xpAmount=10; // Day 1 default
+  let bonusMsg='';
+  let isSpecial=false;
+
+  if(streak>=30){
+    xpAmount=500;
+    bonusMsg='🗓️ 30-Day Login Legend!';
+    isSpecial=true;
+  } else if(streak>=14){
+    xpAmount=200;
+    bonusMsg='🔥 2-Week Warrior!';
+    isSpecial=true;
+  } else if(streak>=7){
+    xpAmount=100;
+    bonusMsg='📅 7-Day Streak Bonus!';
+    isSpecial=true;
+  } else if(streak>=3){
+    xpAmount=30;
+    bonusMsg='⭐ 3-Day Streak!';
+  } else if(streak>=2){
+    xpAmount=20;
+    bonusMsg='✌️ 2-Day Streak!';
+  } else {
+    xpAmount=10;
+    bonusMsg='👋 Welcome back!';
+  }
+
+  // Show login bonus modal
+  setTimeout(()=>{
+    showLoginBonusModal(streak,xpAmount,bonusMsg,isSpecial,totalDays);
+    addXP(xpAmount,'Daily Login Bonus');
+    checkBadges();
+  },800);
+}
+
+function showLoginBonusModal(streak,xp,msg,isSpecial,totalDays){
+  // Remove existing modal if any
+  const existing=document.getElementById('loginBonusModal');
+  if(existing)existing.remove();
+
+  const milestones=[
+    {day:1,xp:10,emoji:'🌱'},
+    {day:2,xp:20,emoji:'✌️'},
+    {day:3,xp:30,emoji:'⭐'},
+    {day:7,xp:100,emoji:'📅'},
+    {day:14,xp:200,emoji:'🔥'},
+    {day:30,xp:500,emoji:'🗓️'},
+  ];
+
+  const modal=document.createElement('div');
+  modal.id='loginBonusModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(7,9,26,.75);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px);animation:fadeIn .25s ease';
+
+  modal.innerHTML=`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:36px 32px;width:100%;max-width:420px;text-align:center;box-shadow:0 28px 72px rgba(0,0,0,.25);animation:scaleIn .35s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden">
+
+      <!-- Background glow -->
+      <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:220px;height:220px;background:${isSpecial?'radial-gradient(circle,rgba(61,90,254,.25),transparent)':'radial-gradient(circle,rgba(61,90,254,.12),transparent)'};border-radius:50%;pointer-events:none"></div>
+
+      <!-- Close btn -->
+      <button onclick="closeLoginBonus()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--tx3);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center">✕</button>
+
+      <!-- Icon -->
+      <div style="width:88px;height:88px;border-radius:28px;background:linear-gradient(135deg,var(--acc),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 18px;box-shadow:0 8px 28px rgba(61,90,254,.45);animation:bounce 2s ease infinite">${isSpecial?'🏆':'🎁'}</div>
+
+      <!-- Title -->
+      <div style="font-size:.72rem;font-weight:900;color:var(--acc);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Daily Login Bonus</div>
+      <div style="font-size:1.4rem;font-weight:900;color:var(--tx);margin-bottom:6px">${msg}</div>
+      <div style="font-size:.9rem;color:var(--tx3);margin-bottom:24px">Day ${streak} of your login streak!</div>
+
+      <!-- XP Amount -->
+      <div style="background:linear-gradient(135deg,var(--acc-bg),var(--purple-bg));border:1.5px solid rgba(61,90,254,.25);border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">You Earned</div>
+        <div style="font-size:3.2rem;font-weight:900;color:var(--acc);line-height:1;margin-bottom:4px">+${xp} XP</div>
+        <div style="font-size:.82rem;color:var(--tx3)">${totalDays} total login days</div>
+      </div>
+
+      <!-- Milestone Progress -->
+      <div style="margin-bottom:24px">
+        <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:13px">Milestone Rewards</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:5px">
+          ${milestones.map(m=>{
+            const reached=streak>=m.day;
+            const isCurrent=streak===m.day;
+            return `<div style="flex:1;text-align:center">
+              <div style="font-size:1.1rem;margin-bottom:4px;filter:${reached?'none':'grayscale(1)'}opacity(${reached?1:.35})">${m.emoji}</div>
+              <div style="width:100%;height:5px;border-radius:3px;background:${reached?'var(--acc)':'var(--surface2)'};margin-bottom:5px;${isCurrent?'box-shadow:0 0 8px rgba(61,90,254,.6)':''}"></div>
+              <div style="font-size:.6rem;font-weight:800;color:${reached?'var(--acc)':'var(--tx4)'}">${m.day}d</div>
+              <div style="font-size:.58rem;color:${reached?'var(--tx3)':'var(--tx4)'}">+${m.xp}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Next milestone hint -->
+      <div style="font-size:.82rem;color:var(--tx3);margin-bottom:22px;padding:11px 16px;background:var(--surface2);border-radius:var(--r-sm)" id="lbNextHint"></div>
+
+      <!-- Confetti button -->
+      <button onclick="closeLoginBonus();spawnConfetti()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--acc),var(--purple));color:#fff;border:none;border-radius:var(--r-sm);font-weight:900;font-size:1rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(61,90,254,.4)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        ${isSpecial?'🎉 Claim Special Reward!':'✨ Claim Bonus!'}
+      </button>
+    </div>`;
+
+  document.body.appendChild(modal);
+
+  // Next milestone hint
+  const next=milestones.find(m=>m.day>streak);
+  const hintEl=document.getElementById('lbNextHint');
+  if(hintEl){
+    if(next)hintEl.textContent=`🎯 ${next.day-streak} more day${next.day-streak>1?'s':''} to unlock ${next.emoji} +${next.xp} XP reward!`;
+    else hintEl.textContent='🏆 You\'ve reached the ultimate milestone! Max login bonus unlocked!';
+  }
+
+  // Auto confetti for special milestones
+  if(isSpecial)setTimeout(spawnConfetti,500);
+}
+
+function closeLoginBonus(){
+  const modal=document.getElementById('loginBonusModal');
+  if(modal){
+    modal.style.animation='fadeIn .2s ease reverse';
+    setTimeout(()=>modal.remove(),220);
+  }
+}
 /* ═══════════════ APP INIT ═══════════════ */
 function initApp(){
-  document.getElementById('landingPage').style.display='none';document.getElementById('authPage').style.display='none';
+  document.getElementById('landingPage').style.display='none';
+  checkDailyLoginBonus();
+initReminders();document.getElementById('authPage').style.display='none';
   document.getElementById('app').style.display='flex';document.getElementById('app').classList.add('visible');
   loadAll();updateUserUI();updateGreeting();navigate('dashboard');checkNotifs();
   if(sbExpanded)document.getElementById('appBody').classList.add('sb-open');
@@ -1627,7 +2153,7 @@ let tipIdx=0;
 function rotateTip(){const el=document.getElementById('tipsText');if(el){el.style.opacity='0';setTimeout(()=>{el.textContent=ALL_TIPS[tipIdx%ALL_TIPS.length];el.style.opacity='1';tipIdx++;},300);}}
 
 /* ═══════════════ NAVIGATION ═══════════════ */
-const PAGE_TITLES={dashboard:'Dashboard',tasks:'My Tasks',upcoming:'Upcoming',quiz:'Quiz',notes:'Notes',aitools:'AI Tools',performance:'Performance',streaks:'Streaks & Goals',pomodoro:'Pomodoro',add:'Add Task',account:'Account Settings',gamify:'XP & Badges 🏆',daily:'Daily Challenge',flashcards:'Flashcards'};
+const PAGE_TITLES={dashboard:'Dashboard',report:'Progress Report 📊',reminders:'Smart Reminders 🔔',tasks:'My Tasks',upcoming:'Upcoming',quiz:'Quiz',notes:'Notes',aitools:'AI Tools',performance:'Performance',streaks:'Streaks & Goals',pomodoro:'Pomodoro',add:'Add Task',account:'Account Settings',gamify:'XP & Badges 🏆',daily:'Daily Challenge',flashcards:'Flashcards'};
 function navigate(pg){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.sb-btn,.bn-btn').forEach(b=>b.classList.remove('active'));
@@ -1646,6 +2172,8 @@ function navigate(pg){
   if(pg==='gamify')renderGamify();
   if(pg==='daily')renderDaily();
   if(pg==='flashcards')renderFlashcards();
+if(pg==='report')renderReport();
+if(pg==='reminders')renderReminders();
   if(window.innerWidth<768)closeSidebar();
   document.getElementById('notifPanel').classList.remove('show');
   document.getElementById('contentArea').scrollTo(0,0);
@@ -1711,6 +2239,8 @@ const BADGES=[
   {id:'xp_500',name:'XP Hunter',emoji:'💰',desc:'Earn 500 total XP',xp:50,check:()=>getXP()>=500},
   {id:'xp_1000',name:'XP Champion',emoji:'👑',desc:'Earn 1000 total XP',xp:100,check:()=>getXP()>=1000},
   {id:'goals_3',name:'Goal Setter',emoji:'🎯',desc:'Set 3 study goals',xp:40,check:()=>goals.length>=3},
+  {id:'login_7',name:'Week Devotee',emoji:'📅',desc:'Login 7 days in a row',xp:100,check:()=>getLoginStreak()>=7},
+  {id:'login_30',name:'Monthly Master',emoji:'🗓️',desc:'Login 30 days in a row',xp:500,check:()=>getLoginStreak()>=30},
 ];
 function getUnlockedBadges(){return G('badges_'+(cu?.email||''))||[];}
 function setUnlockedBadges(arr){S('badges_'+(cu?.email||''),arr);}
@@ -2462,7 +2992,7 @@ const CHALLENGES=[
   {title:'Subject Mastery',desc:'Score 80%+ in the same subject twice today.',xp:75},
   {title:'Task Finisher',desc:'Clear all overdue tasks from your list today.',xp:95},
   {title:'Brain Gym',desc:'Take quizzes in 3 different subjects and score 60%+ in each.',xp:85}];
-  
+
 function renderDaily(){
   const today=new Date();const di=today.getDay();
   document.getElementById('dailyDate').textContent=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
@@ -2543,6 +3073,664 @@ document.addEventListener('click',e=>{
   const panel=document.getElementById('notifPanel');const btn=document.getElementById('notifBtn');
   if(panel&&btn&&!panel.contains(e.target)&&!btn.contains(e.target))panel.classList.remove('show');
 });
+
+/* ═══════════════ PROGRESS REPORT ═══════════════ */
+let reportPeriod='all';
+let rpDonutChart=null,rpLineChart=null;
+
+function setReportPeriod(p,btn){
+  reportPeriod=p;
+  document.querySelectorAll('#rp-week,#rp-month,#rp-all').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReport();
+}
+
+function getReportTasks(){
+  const now=Date.now();
+  if(reportPeriod==='week')return tasks.filter(t=>t.created>=now-7*86400000);
+  if(reportPeriod==='month')return tasks.filter(t=>t.created>=now-30*86400000);
+  return tasks;
+}
+
+function getReportQuizzes(){
+  const quizH=G(`quizHist_${cu.email}`)||[];
+  const now=Date.now();
+  if(reportPeriod==='week')return quizH.filter(q=>q.date>=now-7*86400000);
+  if(reportPeriod==='month')return quizH.filter(q=>q.date>=now-30*86400000);
+  return quizH;
+}
+
+function renderReport(){
+  const rt=getReportTasks();
+  const rq=getReportQuizzes();
+  const xp=getXP();
+  const lv=getLvl(xp);
+  const idx=getLvlIdx(xp);
+  const done=rt.filter(t=>t.status==='completed').length;
+  const total=rt.length;
+  const pending=rt.filter(t=>t.status==='pending').length;
+  const overdue=rt.filter(isOverdue).length;
+  const rate=total?Math.round((done/total)*100):0;
+  const avgQ=rq.length?Math.round(rq.reduce((s,q)=>s+(q.score/q.total*100),0)/rq.length):0;
+  const grade=rate>=90?'A+':rate>=80?'A':rate>=70?'B+':rate>=60?'B':rate>=50?'C':'D';
+  const streak=getCurStreak();
+
+  // Header
+  document.getElementById('rpAvatar').textContent=cu.name.charAt(0).toUpperCase();
+  document.getElementById('rpName').textContent=cu.name;
+  document.getElementById('rpGrade').textContent=(cu.grade||'Student')+' · Level '+(idx+1)+' '+lv.name+' '+lv.emoji;
+  document.getElementById('rpDate').textContent='Report Period: '+(reportPeriod==='week'?'Last 7 Days':reportPeriod==='month'?'Last 30 Days':'All Time')+' · Generated '+new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('rpGradeLetter').textContent=grade;
+  document.getElementById('rpFooterDate').textContent=new Date().toLocaleDateString();
+
+  // KPI Row
+  document.getElementById('rpKPIRow').innerHTML=[
+    {ic:'✅',v:done,l:'Tasks Done',c:'var(--green)'},
+    {ic:'📋',v:total,l:'Total Tasks',c:'var(--acc)'},
+    {ic:'⏳',v:pending,l:'Pending',c:'var(--amber)'},
+    {ic:'⚠️',v:overdue,l:'Overdue',c:'var(--red)'},
+    {ic:'🧠',v:rq.length,l:'Quizzes',c:'var(--purple)'},
+    {ic:'📊',v:avgQ+'%',l:'Quiz Avg',c:'var(--teal)'},
+    {ic:'🔥',v:streak,l:'Streak',c:'var(--amber)'},
+    {ic:'⚡',v:xp,l:'Total XP',c:'var(--acc)'},
+  ].map(k=>`
+    <div class="card" style="text-align:center;padding:16px;cursor:default">
+      <div style="font-size:1.4rem;margin-bottom:6px">${k.ic}</div>
+      <div style="font-size:1.5rem;font-weight:900;color:${k.c};line-height:1;margin-bottom:4px">${k.v}</div>
+      <div style="font-size:.72rem;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.3px">${k.l}</div>
+    </div>`).join('');
+
+  // Subject Performance
+  const subjs={};rt.forEach(t=>{const s=t.subject||'General';if(!subjs[s])subjs[s]={t:0,d:0,high:0,overdue:0};subjs[s].t++;if(t.status==='completed')subjs[s].d++;if(t.priority==='high')subjs[s].high++;if(isOverdue(t))subjs[s].overdue++;});
+  const subjEl=document.getElementById('rpSubjects');
+  subjEl.innerHTML=Object.keys(subjs).length?Object.entries(subjs).sort((a,b)=>b[1].t-a[1].t).map(([s,v])=>{
+    const p=Math.round((v.d/v.t)*100);
+    const subjGrade=p>=90?'A+':p>=80?'A':p>=70?'B+':p>=60?'B':p>=50?'C':'D';
+    return `
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <div>
+            <span style="font-weight:800;font-size:.93rem;color:var(--tx)">${E(s)}</span>
+            <span style="margin-left:9px;font-size:.75rem;color:var(--tx3)">${v.d}/${v.t} tasks · ${v.high} high priority</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <span style="font-size:.82rem;font-weight:900;color:${p>=80?'var(--green)':p>=60?'var(--amber)':'var(--red)'}">${p}%</span>
+            <span style="padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:900;background:${p>=80?'var(--green-bg)':p>=60?'var(--amber-bg)':'var(--red-bg)'};color:${p>=80?'var(--green)':p>=60?'var(--amber)':'var(--red)'}">${subjGrade}</span>
+          </div>
+        </div>
+        <div style="height:10px;background:var(--surface2);border-radius:5px;overflow:hidden">
+          <div style="height:100%;width:${p}%;background:${p>=80?'var(--green)':p>=60?'var(--acc)':'var(--amber)'};border-radius:5px;transition:width 1.2s ease"></div>
+        </div>
+      </div>`;
+  }).join(''):'<div style="color:var(--tx3);padding:18px 0;font-size:.9rem">No subject data for this period.</div>';
+
+  // Quiz Analysis
+  const quizBySubj={};rq.forEach(q=>{if(!quizBySubj[q.subject])quizBySubj[q.subject]=[];quizBySubj[q.subject].push(Math.round(q.score/q.total*100));});
+  const qaEl=document.getElementById('rpQuizAnalysis');
+  qaEl.innerHTML=Object.keys(quizBySubj).length?`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px">
+      ${Object.entries(quizBySubj).map(([s,scores])=>{
+        const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+        const best=Math.max(...scores);const worst=Math.min(...scores);
+        return `<div style="background:var(--surface2);border-radius:var(--r);padding:16px">
+          <div style="font-weight:800;font-size:.9rem;color:var(--tx);margin-bottom:10px">${QUIZ_DATA[s]?.icon||'🧠'} ${E(s)}</div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px"><span style="color:var(--tx3)">Average</span><span style="font-weight:900;color:${avg>=80?'var(--green)':avg>=60?'var(--amber)':'var(--red)'}">${avg}%</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px"><span style="color:var(--tx3)">Best</span><span style="font-weight:800;color:var(--green)">${best}%</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:10px"><span style="color:var(--tx3)">Attempts</span><span style="font-weight:800;color:var(--acc)">${scores.length}</span></div>
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${avg}%;background:${avg>=80?'var(--green)':avg>=60?'var(--acc)':'var(--amber)'};border-radius:3px"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`
+  :'<div style="color:var(--tx3);padding:18px 0;font-size:.9rem">No quiz data for this period. <span style="color:var(--acc);cursor:pointer;font-weight:700" onclick="navigate(\'quiz\')">Take a quiz →</span></div>';
+
+  // Strengths & Weaknesses
+  const strengths=[];const weaknesses=[];
+  if(rate>=80)strengths.push({ic:'✅',t:'High completion rate',d:rate+'% of tasks completed'});
+  if(streak>=3)strengths.push({ic:'🔥',t:'Consistent studier',d:streak+'-day study streak'});
+  if(avgQ>=75)strengths.push({ic:'🧠',t:'Strong quiz performer',d:'Average score: '+avgQ+'%'});
+  if(done>=10)strengths.push({ic:'💪',t:'Task crusher',d:'Completed '+done+' tasks'});
+  if(notes.length>=5)strengths.push({ic:'📝',t:'Diligent note-taker',d:notes.length+' notes created'});
+  if(rate<60)weaknesses.push({ic:'📋',t:'Task completion needs work',d:'Only '+rate+'% completed'});
+  if(overdue>0)weaknesses.push({ic:'⚠️',t:overdue+' overdue tasks',d:'Clear backlog to reduce stress'});
+  if(avgQ<60&&rq.length>0)weaknesses.push({ic:'🧠',t:'Quiz scores below target',d:'Aim for 70%+ average'});
+  if(streak===0)weaknesses.push({ic:'🔥',t:'No active streak',d:'Study daily to build momentum'});
+  if(!strengths.length)strengths.push({ic:'🌱',t:'Just getting started',d:'Complete tasks to show strengths!'});
+  if(!weaknesses.length)weaknesses.push({ic:'🎉',t:'No major weak areas!',d:'Keep maintaining this standard.'});
+  const swItem=(i)=>`<div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.06)"><span style="font-size:1.1rem">${i.ic}</span><div><div style="font-weight:800;font-size:.88rem;color:var(--tx)">${i.t}</div><div style="font-size:.78rem;color:var(--tx3);margin-top:2px">${i.d}</div></div></div>`;
+  document.getElementById('rpStrengths').innerHTML=strengths.map(swItem).join('');
+  document.getElementById('rpWeaknesses').innerHTML=weaknesses.map(swItem).join('');
+
+  // Consistency
+  const sData=getStreakData();
+  const totalDays=Object.keys(sData).length;
+  const thisWeekDays=[...Array(7)].filter((_,i)=>sData[new Date(Date.now()-i*86400000).toDateString()]).length;
+  document.getElementById('rpConsistency').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:13px;margin-bottom:16px">
+      ${[{v:streak+'🔥',l:'Current Streak'},{v:Math.max(streak,0)+'d',l:'Best Streak'},{v:totalDays,l:'Total Study Days'},{v:thisWeekDays+'/7',l:'Days This Week'}].map(s=>`
+        <div style="background:var(--surface2);border-radius:var(--r);padding:16px;text-align:center">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--acc);margin-bottom:4px">${s.v}</div>
+          <div style="font-size:.75rem;color:var(--tx3);font-weight:700">${s.l}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+      ${[...Array(7)].map((_,i)=>{const d=new Date(Date.now()-(6-i)*86400000);const done2=!!sData[d.toDateString()];return `<div style="flex:1;min-width:36px"><div style="text-align:center;font-size:.65rem;color:var(--tx4);margin-bottom:4px">${d.toLocaleDateString('en',{weekday:'short'}).slice(0,2)}</div><div style="height:36px;border-radius:9px;background:${done2?'var(--acc)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:.8rem">${done2?'✓':''}</div></div>`;}).join('')}
+    </div>`;
+
+  // Heatmap
+  document.getElementById('rpHeatmap').innerHTML=Array(28).fill(0).map((_,i)=>{const d=new Date(Date.now()-(27-i)*86400000);const cnt=tasks.filter(t=>t.status==='completed'&&new Date(t.updated).toDateString()===d.toDateString()).length;const lvl=cnt>=3?3:cnt>=2?2:cnt>=1?1:0;return `<div class="hm${lvl?` hm${lvl}`:''}" title="${d.toLocaleDateString()}: ${cnt} tasks"></div>`;}).join('');
+
+  // AI Recommendations
+  const recs=[];
+  if(overdue>0)recs.push({ic:'🚨',t:'Clear overdue tasks first',d:'You have '+overdue+' overdue tasks. Address these before adding new ones to reduce stress.'});
+  if(rate<70)recs.push({ic:'📋',t:'Improve completion rate',d:'Break large tasks into subtasks using the AI subtask generator. Aim for 70%+ completion.'});
+  if(rq.length<3)recs.push({ic:'🧠',t:'Take more quizzes',d:'Quiz yourself daily in your weakest subject. Even 10 minutes of testing beats 1 hour of re-reading.'});
+  if(streak<3)recs.push({ic:'🔥',t:'Build a study streak',d:'Study for at least 25 minutes daily using the Pomodoro timer. Consistency compounds over time.'});
+  if(avgQ<70&&rq.length>=2)recs.push({ic:'📖',t:'Review quiz mistakes',d:'Go back to topics where you scored below 60%. Use flashcards to reinforce weak areas.'});
+  if(fcCards.length<5)recs.push({ic:'🃏',t:'Create more flashcards',d:'Flashcards with spaced repetition are the most efficient memorisation tool. Aim for 20+ cards.'});
+  if(!recs.length)recs.push({ic:'🌟',t:'You\'re performing excellently!',d:'Maintain your current study habits. Consider increasing quiz difficulty to keep challenging yourself.'});
+  document.getElementById('rpRecommendations').innerHTML=recs.map(r=>`
+    <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid rgba(61,90,254,.1)">
+      <div style="width:42px;height:42px;border-radius:13px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${r.ic}</div>
+      <div><div style="font-weight:800;font-size:.92rem;color:var(--tx);margin-bottom:3px">${r.t}</div><div style="font-size:.84rem;color:var(--tx2);line-height:1.65">${r.d}</div></div>
+    </div>`).join('');
+
+  // Badges
+  const unlocked=getUnlockedBadges();const earned=BADGES.filter(b=>unlocked.includes(b.id));
+  document.getElementById('rpBadgeCount').textContent=earned.length+'/'+BADGES.length+' earned';
+  document.getElementById('rpBadges').innerHTML=earned.length?earned.map(b=>`
+    <div style="background:linear-gradient(135deg,var(--amber-bg),var(--surface));border:1px solid var(--amber-border);border-radius:var(--r);padding:14px;text-align:center">
+      <div style="font-size:1.6rem;margin-bottom:5px">${b.emoji}</div>
+      <div style="font-weight:800;font-size:.78rem;color:var(--tx)">${b.name}</div>
+    </div>`)
+  .join(''):'<div style="color:var(--tx3);font-size:.9rem;padding:14px 0">Complete tasks and quizzes to earn badges!</div>';
+
+  // Charts
+  setTimeout(()=>{
+    const cs=getComputedStyle(document.documentElement);
+    const acc=cs.getPropertyValue('--acc').trim(),green=cs.getPropertyValue('--green').trim(),amber=cs.getPropertyValue('--amber').trim(),red=cs.getPropertyValue('--red').trim(),s2=cs.getPropertyValue('--surface2').trim(),tx3=cs.getPropertyValue('--tx3').trim(),bd=cs.getPropertyValue('--border').trim();
+    if(rpDonutChart)rpDonutChart.destroy();
+    const rdc=document.getElementById('rpDonut');
+    if(rdc)rpDonutChart=new Chart(rdc,{type:'doughnut',data:{labels:['Completed','In Progress','Pending','Overdue'],datasets:[{data:[done,rt.filter(t=>t.status==='in-progress').length,pending,overdue],backgroundColor:[green,acc,s2,red],borderWidth:0,hoverOffset:7}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{color:tx3,padding:10,font:{size:11,family:'Inter'}}}}}});
+    if(rpLineChart)rpLineChart.destroy();
+    const rlc=document.getElementById('rpLine');
+    const days7=['6d ago','5d ago','4d ago','3d ago','2d ago','Yesterday','Today'];
+    const lineData=days7.map((_,i)=>{const d=new Date(Date.now()-(6-i)*86400000).toDateString();return tasks.filter(t=>t.status==='completed'&&new Date(t.updated).toDateString()===d).length;});
+    if(rlc)rpLineChart=new Chart(rlc,{type:'line',data:{labels:days7,datasets:[{data:lineData,borderColor:acc,backgroundColor:acc+'22',borderWidth:2.5,pointRadius:5,pointBackgroundColor:acc,fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tx3,font:{size:10}},grid:{display:false}},y:{ticks:{color:tx3,stepSize:1,font:{size:11}},grid:{color:bd}}}}});
+  },250);
+}
+
+/* ═══ PDF DOWNLOAD ═══ */
+function downloadPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const xp=getXP();const lv=getLvl(xp);const idx=getLvlIdx(xp);
+  const rt=getReportTasks();const rq=getReportQuizzes();
+  const done=rt.filter(t=>t.status==='completed').length;
+  const total=rt.length;const rate=total?Math.round((done/total)*100):0;
+  const avgQ=rq.length?Math.round(rq.reduce((s,q)=>s+(q.score/q.total*100),0)/rq.length):0;
+  const grade=rate>=90?'A+':rate>=80?'A':rate>=70?'B+':rate>=60?'B':rate>=50?'C':'D';
+  const streak=getCurStreak();
+  const W=210;let y=20;
+  const addText=(text,x,fy,size,bold,color)=>{doc.setFontSize(size);doc.setFont('helvetica',bold?'bold':'normal');if(color)doc.setTextColor(...color);else doc.setTextColor(8,14,40);doc.text(text,x,fy);};
+  const addRect=(x,fy,w,h,r,g,b,filled=true)=>{doc.setFillColor(r,g,b);if(filled)doc.roundedRect(x,fy,w,h,3,3,'F');else{doc.setDrawColor(r,g,b);doc.roundedRect(x,fy,w,h,3,3,'S');}};
+
+  // Header bg
+  addRect(0,0,W,52,61,90,254);
+  addText('STUDYBOT PRO',14,12,8,false,[255,255,255]);
+  addText('PROGRESS REPORT',14,19,18,true,[255,255,255]);
+  addText(cu.name,14,30,13,true,[255,255,255]);
+  addText((cu.grade||'Student')+' · Level '+(idx+1)+' '+lv.name,14,38,10,false,[200,210,255]);
+  addText(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),14,45,9,false,[180,190,240]);
+  // Grade circle
+  addRect(170,8,28,28,255,255,255,true);
+  doc.setTextColor(61,90,254);doc.setFontSize(16);doc.setFont('helvetica','bold');doc.text(grade,184,26,{align:'center'});
+  doc.setTextColor(100,100,150);doc.setFontSize(7);doc.text('GRADE',184,32,{align:'center'});
+  y=62;
+
+  // KPI boxes
+  const kpis=[['Tasks Done',done],['Completion',rate+'%'],['Quiz Avg',avgQ+'%'],['Streak',streak+'d'],['Total XP',xp],['Level',idx+1]];
+  kpis.forEach((k,i)=>{const col=i%3;const row=Math.floor(i/3);const bx=14+col*64;const by=y+row*22;addRect(bx,by,60,18,230,235,255);doc.setTextColor(8,14,40);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(String(k[1]),bx+30,by+8,{align:'center'});doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(90,100,144);doc.text(k[0],bx+30,by+14,{align:'center'});});
+  y+=50;
+
+  // Subject section
+  doc.setDrawColor(221,226,245);doc.line(14,y,196,y);y+=8;
+  addText('SUBJECT PERFORMANCE',14,y,10,true,[61,90,254]);y+=8;
+  const subjs={};rt.forEach(t=>{const s=t.subject||'General';if(!subjs[s])subjs[s]={t:0,d:0};subjs[s].t++;if(t.status==='completed')subjs[s].d++;});
+  Object.entries(subjs).slice(0,6).forEach(([s,v])=>{
+    const p=Math.round((v.d/v.t)*100);const sg=p>=90?'A+':p>=80?'A':p>=70?'B+':p>=60?'B':'C';
+    addText(s,14,y,9,true,[8,14,40]);addText(sg,155,y,9,true,p>=80?[21,163,82]:p>=60?[217,119,6]:[224,49,49]);addText(v.d+'/'+v.t+' ('+p+'%)',170,y,9,false,[90,100,144]);
+    const bw=(p/100)*130;addRect(14,y+2,130,4,230,235,255);addRect(14,y+2,bw,4,p>=80?21:p>=60?217:224,p>=80?163:p>=60?119:49,p>=80?82:p>=60?6:49);
+    y+=14;if(y>270){doc.addPage();y=20;}
+  });
+
+  // Quiz section
+  y+=4;doc.line(14,y,196,y);y+=8;
+  addText('QUIZ PERFORMANCE',14,y,10,true,[61,90,254]);y+=8;
+  rq.slice(-6).forEach(q=>{const p=Math.round(q.score/q.total*100);addText(q.subject,14,y,9,false,[8,14,40]);addText(q.score+'/'+q.total+' → '+p+'%',120,y,9,true,p>=80?[21,163,82]:p>=60?[217,119,6]:[224,49,49]);addText(new Date(q.date).toLocaleDateString(),162,y,8,false,[144,164,204]);y+=10;if(y>270){doc.addPage();y=20;}});
+
+  // Badges
+  y+=4;doc.line(14,y,196,y);y+=8;
+  addText('BADGES EARNED',14,y,10,true,[61,90,254]);y+=8;
+  const unlocked=getUnlockedBadges();const earned=BADGES.filter(b=>unlocked.includes(b.id));
+  addText(earned.map(b=>b.emoji+' '+b.name).join('  ·  ')||'No badges yet',14,y,8,false,[90,100,144]);y+=12;
+
+  // Footer
+  if(y>260){doc.addPage();y=20;}
+  y=Math.max(y,270);addRect(0,y,W,20,61,90,254);doc.setTextColor(255,255,255);doc.setFontSize(8);doc.text('StudyBot Pro · Progress Report · Keep studying! 📚',W/2,y+8,{align:'center'});doc.text('Generated: '+new Date().toLocaleString(),W/2,y+14,{align:'center'});
+
+  doc.save(`StudyBot_Report_${cu.name.replace(' ','_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+  toast('📄 PDF downloaded!','success');addXP(10,'Generated Report');
+}
+
+/* ═══ SHARE REPORT ═══ */
+function shareReport(){
+  const rt=getReportTasks();const done=rt.filter(t=>t.status==='completed').length;const total=rt.length;const rate=total?Math.round((done/total)*100):0;const streak=getCurStreak();const xp=getXP();const lv=getLvl(xp);
+  const text=`📊 My StudyBot Pro Report\n👤 ${cu.name} · ${lv.emoji} ${lv.name}\n✅ ${done}/${total} tasks (${rate}%)\n🔥 ${streak}-day streak\n⚡ ${xp} XP earned\n\nStudy smarter with StudyBot Pro!`;
+  if(navigator.share){navigator.share({title:'My Progress Report',text});}
+  else{navigator.clipboard.writeText(text);toast('📋 Report copied to clipboard!','success');}
+}
+
+/* ═══════════════ SMART REMINDERS ═══════════════ */
+let reminderCheckInterval=null;
+
+function getRmSettings(){return G(`rm_settings_${cu?.email||''}`)||{overdue:true,streak:true,flash:true,daily:true,deadline:true};}
+function setRmSettings(s){S(`rm_settings_${cu?.email||''}`,s);}
+function getCustomReminders(){return G(`custom_rm_${cu?.email||''}`)||[];}
+function saveCustomReminders(arr){S(`custom_rm_${cu?.email||''}`,arr);}
+function getRmHistory(){return G(`rm_history_${cu?.email||''}`)||[];}
+function addRmHistory(msg){const h=getRmHistory();h.unshift({msg,time:Date.now()});S(`rm_history_${cu?.email||''}`,h.slice(0,30));}
+
+function toggleRmSetting(key,el){
+  const s=getRmSettings();s[key]=!s[key];setRmSettings(s);
+  el.classList.toggle('on',s[key]);
+  toast(s[key]?`🔔 ${key} reminders enabled`:`🔕 ${key} reminders disabled`,'info');
+}
+
+function requestNotifPermission(){
+  if(!('Notification' in window)){toast('Browser notifications not supported.','error');return;}
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){toast('✅ Notifications enabled!','success');document.getElementById('notifPermBanner').style.display='none';}
+    else toast('Notifications blocked. Enable in browser settings.','error');
+  });
+}
+
+function sendBrowserNotif(title,body,icon='📚'){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{new Notification(title,{body,icon:'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>'+icon+'</text></svg>'});}catch(e){}
+}
+
+function generateAutoReminders(){
+  if(!cu)return[];
+  const reminders=[];const now=new Date();const settings=getRmSettings();
+  const today=now.toISOString().split('T')[0];
+  const hour=now.getHours();
+
+  // 1. OVERDUE TASKS
+  if(settings.overdue){
+    const overdueTasks=tasks.filter(isOverdue);
+    if(overdueTasks.length>0){
+      reminders.push({
+        id:'auto_overdue',type:'urgent',icon:'⚠️',
+        title:overdueTasks.length+' Overdue Task'+(overdueTasks.length>1?'s':'')+'!',
+        msg:'Complete these immediately: '+overdueTasks.slice(0,3).map(t=>t.title).join(', ')+(overdueTasks.length>3?' + '+(overdueTasks.length-3)+' more':''),
+        timeLabel:'Overdue now',
+        action:()=>navigate('tasks'),
+        actionLabel:'View Tasks →'
+      });
+    }
+  }
+
+  // 2. DUE TODAY
+  if(settings.deadline){
+    const dueToday=tasks.filter(t=>t.due===today&&t.status!=='completed');
+    if(dueToday.length>0){
+      reminders.push({
+        id:'auto_today',type:'soon',icon:'📅',
+        title:dueToday.length+' Task'+(dueToday.length>1?'s':'')+' Due Today',
+        msg:dueToday.map(t=>t.title).slice(0,3).join(', ')+(dueToday.length>3?' and more...':''),
+        timeLabel:'Due today',
+        action:()=>navigate('tasks'),
+        actionLabel:'View Tasks →'
+      });
+    }
+  }
+
+  // 3. DUE TOMORROW
+  if(settings.deadline){
+    const tomorrow=new Date(Date.now()+86400000).toISOString().split('T')[0];
+    const dueTomorrow=tasks.filter(t=>t.due===tomorrow&&t.status!=='completed');
+    if(dueTomorrow.length>0){
+      reminders.push({
+        id:'auto_tomorrow',type:'soon',icon:'⏰',
+        title:'Due Tomorrow: '+dueTomorrow.length+' Task'+(dueTomorrow.length>1?'s':''),
+        msg:dueTomorrow.map(t=>t.title).slice(0,2).join(', ')+(dueTomorrow.length>2?' and more':''),
+        timeLabel:'In 24 hours',
+        action:()=>navigate('upcoming'),
+        actionLabel:'See Upcoming →'
+      });
+    }
+  }
+
+  // 4. STREAK WARNING
+  if(settings.streak){
+    const streakData=getStreakData();
+    const studiedToday=!!streakData[now.toDateString()];
+    const currentStreak=getCurStreak();
+    if(!studiedToday&&hour>=17){
+      reminders.push({
+        id:'auto_streak',type:currentStreak>0?'urgent':'normal',icon:'🔥',
+        title:currentStreak>0?`Don't break your ${currentStreak}-day streak!`:'Start your study streak today!',
+        msg:currentStreak>0?'You haven\'t studied yet today. Complete a task or Pomodoro session to keep your streak alive!':'Study for at least 25 minutes to start building a consistent habit.',
+        timeLabel:'Study today',
+        action:()=>navigate('pomodoro'),
+        actionLabel:'Start Timer →'
+      });
+    }
+  }
+
+  // 5. FLASHCARDS DUE
+  if(settings.flash){
+    const dueCards=(G(`flashcards_${cu.email}`)||[]).filter(c=>c.nextReview<=Date.now());
+    if(dueCards.length>0){
+      reminders.push({
+        id:'auto_flash',type:'normal',icon:'🃏',
+        title:dueCards.length+' Flashcard'+(dueCards.length>1?'s':'')+' Due for Review',
+        msg:'Spaced repetition works best when reviewed on time. Takes only '+(Math.ceil(dueCards.length*0.5))+' minutes.',
+        timeLabel:'Review now',
+        action:()=>navigate('flashcards'),
+        actionLabel:'Review Cards →'
+      });
+    }
+  }
+
+  // 6. DAILY CHALLENGE
+  if(settings.daily){
+    const dailyDone=G(`dailyDone_${cu.email}`)||[];
+    if(!dailyDone.includes(now.toDateString())&&hour>=9){
+      reminders.push({
+        id:'auto_daily',type:'normal',icon:'⚡',
+        title:"Today's Daily Challenge Awaits!",
+        msg:'Complete today\'s challenge and earn bonus XP. Only takes a few minutes!',
+        timeLabel:'Complete today',
+        action:()=>navigate('daily'),
+        actionLabel:'View Challenge →'
+      });
+    }
+  }
+
+  // 7. HIGH PRIORITY TASKS
+  const highPending=tasks.filter(t=>t.priority==='high'&&t.status==='pending'&&!isOverdue(t));
+  if(highPending.length>=3){
+    reminders.push({
+      id:'auto_high',type:'soon',icon:'🔴',
+      title:highPending.length+' High Priority Tasks Pending',
+      msg:'Focus on: '+highPending.slice(0,2).map(t=>t.title).join(', ')+(highPending.length>2?' and '+(highPending.length-2)+' more':''),
+      timeLabel:'High priority',
+      action:()=>{setFilter('high',document.querySelector('[data-f="high"]'));navigate('tasks');},
+      actionLabel:'View High Priority →'
+    });
+  }
+
+  // 8. NO STUDY TODAY (evening)
+  if(hour>=20){
+    const completedToday=tasks.filter(t=>t.status==='completed'&&new Date(t.updated).toDateString()===now.toDateString()).length;
+    if(completedToday===0){
+      reminders.push({
+        id:'auto_evening',type:'normal',icon:'🌙',
+        title:'Evening Study Reminder',
+        msg:'You haven\'t completed any tasks today. Even 25 minutes of focused study makes a difference!',
+        timeLabel:'Evening',
+        action:()=>navigate('pomodoro'),
+        actionLabel:'Start Pomodoro →'
+      });
+    }
+  }
+
+  // 9. QUIZ SUGGESTION
+  const quizH=G(`quizHist_${cu.email}`)||[];
+  const lastQuiz=quizH.length?quizH[quizH.length-1]:null;
+  const daysSinceQuiz=lastQuiz?Math.floor((Date.now()-lastQuiz.date)/86400000):999;
+  if(daysSinceQuiz>=3){
+    reminders.push({
+      id:'auto_quiz',type:'normal',icon:'🧠',
+      title:daysSinceQuiz===999?'Take your first quiz!':'Quiz yourself — '+daysSinceQuiz+' days since last quiz',
+      msg:'Regular self-testing is the most effective study technique. Earn XP for every correct answer!',
+      timeLabel:daysSinceQuiz===999?'Never quizzed':''+daysSinceQuiz+'d ago',
+      action:()=>navigate('quiz'),
+      actionLabel:'Take Quiz →'
+    });
+  }
+
+  return reminders;
+}
+
+function renderReminders(){
+  // Check notification permission
+  if('Notification' in window&&Notification.permission==='default'){
+    document.getElementById('notifPermBanner').style.display='flex';
+  } else {
+    document.getElementById('notifPermBanner').style.display='none';
+  }
+
+  // Load settings toggles
+  const s=getRmSettings();
+  ['overdue','streak','flash','daily','deadline'].forEach(k=>{
+    const el=document.getElementById('rm-'+k);
+    if(el)el.classList.toggle('on',!!s[k]);
+  });
+
+  refreshAutoReminders();
+  renderCustomReminders();
+  renderReminderHistory();
+  updateReminderBadge();
+
+  // Set default date to today
+  const di=document.getElementById('rm-date');
+  if(di)di.value=new Date().toISOString().split('T')[0];
+
+  // Start checking reminders every minute
+  if(reminderCheckInterval)clearInterval(reminderCheckInterval);
+  reminderCheckInterval=setInterval(checkScheduledReminders,60000);
+}
+
+function refreshAutoReminders(){
+  const reminders=generateAutoReminders();
+  const grid=document.getElementById('autoRemindersGrid');
+  if(!grid)return;
+
+  if(!reminders.length){
+    grid.innerHTML=`<div class="empty-s"><span class="ei">✅</span><div class="et">All clear!</div><div class="es">No urgent reminders right now. Keep up the great work!</div></div>`;
+    return;
+  }
+
+  grid.innerHTML=reminders.map(r=>`
+    <div class="reminder-card ${r.type}" style="cursor:pointer" onclick="${r.action.toString().includes('navigate')?'navigate(\''+r.action.toString().match(/navigate\('(\w+)'\)/)?.[1]+'\')'  :''}">
+      <div class="reminder-ic" style="background:${r.type==='urgent'?'var(--red-bg)':r.type==='soon'?'var(--amber-bg)':'var(--green-bg)'}">
+        <span class="rm-bell">${r.icon}</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="reminder-title">${E(r.title)}</div>
+        <div class="reminder-sub">${E(r.msg)}</div>
+        <button class="btn btn-sm" style="margin-top:9px;background:${r.type==='urgent'?'var(--red-bg)':r.type==='soon'?'var(--amber-bg)':'var(--acc-bg)'};color:${r.type==='urgent'?'var(--red)':r.type==='soon'?'var(--amber)':'var(--acc)'};border:none;padding:6px 14px;font-size:.78rem" onclick="event.stopPropagation();handleReminderAction('${r.id}')">${r.actionLabel}</button>
+      </div>
+      <span class="reminder-time" style="background:${r.type==='urgent'?'var(--red-bg)':r.type==='soon'?'var(--amber-bg)':'var(--green-bg)'};color:${r.type==='urgent'?'var(--red)':r.type==='soon'?'var(--amber)':'var(--green)'}">${r.timeLabel}</span>
+    </div>`).join('');
+
+  updateReminderBadge(reminders.filter(r=>r.type==='urgent').length);
+}
+
+function handleReminderAction(id){
+  const rm=generateAutoReminders().find(r=>r.id===id);
+  if(rm&&rm.action)rm.action();
+}
+
+function openAddReminderModal(){
+  document.getElementById('rm-title').value='';
+  document.getElementById('rm-msg').value='';
+  document.getElementById('rm-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('rm-time').value='08:00';
+  document.getElementById('addReminderModal').classList.add('show');
+}
+
+function saveCustomReminder(){
+  const title=document.getElementById('rm-title').value.trim();
+  const msg=document.getElementById('rm-msg').value.trim();
+  const date=document.getElementById('rm-date').value;
+  const time=document.getElementById('rm-time').value;
+  const type=document.getElementById('rm-type').value;
+  const repeat=document.getElementById('rm-repeat').value;
+
+  if(!title)return toast('Title is required!','error');
+  if(!date)return toast('Please select a date!','error');
+
+  const reminder={
+    id:Date.now().toString(),
+    title,msg,date,time,type,repeat,
+    created:Date.now(),
+    active:true,
+    triggered:false
+  };
+
+  const reminders=getCustomReminders();
+  reminders.unshift(reminder);
+  saveCustomReminders(reminders);
+  closeModal('addReminderModal');
+  toast('🔔 Reminder set!','success');
+  addXP(5,'Reminder Created');
+  renderCustomReminders();
+  scheduleNotification(reminder);
+}
+
+function scheduleNotification(rm){
+  if(!rm.date||!rm.time)return;
+  const scheduledTime=new Date(rm.date+'T'+rm.time).getTime();
+  const delay=scheduledTime-Date.now();
+  if(delay<=0||delay>7*24*60*60*1000)return; // Only schedule within 7 days
+  setTimeout(()=>{
+    sendBrowserNotif('📚 '+rm.title,rm.msg||'Time to study!','📚');
+    addRmHistory(rm.title);
+    toast('🔔 Reminder: '+rm.title,'info');
+    addNotif('🔔 '+rm.title);
+    // Handle repeat
+    if(rm.repeat==='daily'){
+      const next={...rm,id:Date.now().toString(),date:new Date(scheduledTime+86400000).toISOString().split('T')[0]};
+      const all=getCustomReminders();all.push(next);saveCustomReminders(all);scheduleNotification(next);
+    } else if(rm.repeat==='weekly'){
+      const next={...rm,id:Date.now().toString(),date:new Date(scheduledTime+7*86400000).toISOString().split('T')[0]};
+      const all=getCustomReminders();all.push(next);saveCustomReminders(all);scheduleNotification(next);
+    }
+  },delay);
+}
+
+function checkScheduledReminders(){
+  if(!cu)return;
+  const reminders=getCustomReminders();const now=Date.now();
+  reminders.forEach(rm=>{
+    if(!rm.active||rm.triggered)return;
+    const t=new Date(rm.date+'T'+(rm.time||'00:00')).getTime();
+    if(now>=t&&now-t<120000){ // Within 2 min window
+      rm.triggered=true;
+      sendBrowserNotif('📚 '+rm.title,rm.msg||'StudyBot reminder!');
+      addRmHistory(rm.title);
+      toast('🔔 '+rm.title,'info');
+      addNotif('🔔 '+rm.title);
+    }
+  });
+  saveCustomReminders(reminders);
+}
+
+function deleteCustomReminder(id){
+  const reminders=getCustomReminders().filter(r=>r.id!==id);
+  saveCustomReminders(reminders);
+  renderCustomReminders();
+  toast('Reminder deleted.','info');
+}
+
+function toggleReminderActive(id){
+  const reminders=getCustomReminders();
+  const rm=reminders.find(r=>r.id===id);
+  if(rm){rm.active=!rm.active;saveCustomReminders(reminders);renderCustomReminders();toast(rm.active?'🔔 Reminder enabled':'🔕 Reminder paused','info');}
+}
+
+function renderCustomReminders(){
+  const reminders=getCustomReminders();
+  const grid=document.getElementById('customRemindersGrid');
+  const cnt=document.getElementById('customReminderCount');
+  if(cnt)cnt.textContent=reminders.length+' reminder'+(reminders.length!==1?'s':'');
+  if(!grid)return;
+
+  const typeIcons={study:'📚',deadline:'⏰',quiz:'🧠',break:'☕',custom:'📌'};
+  if(!reminders.length){
+    grid.innerHTML=`<div class="empty-s"><span class="ei">📌</span><div class="et">No custom reminders</div><div class="es">Add reminders for specific tasks or events</div></div>`;
+    return;
+  }
+
+  grid.innerHTML=reminders.map(r=>{
+    const dt=r.date?new Date(r.date+'T'+(r.time||'00:00')):null;
+    const isPast=dt&&dt<new Date();
+    return `
+      <div class="reminder-card ${isPast?'':'normal'}" style="${!r.active?'opacity:.5':''}">
+        <div class="reminder-ic" style="background:var(--acc-bg)">${typeIcons[r.type]||'📌'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="reminder-title">${E(r.title)}</div>
+          ${r.msg?`<div class="reminder-sub">${E(r.msg)}</div>`:''}
+          <div style="display:flex;gap:8px;margin-top:7px;flex-wrap:wrap">
+            ${dt?`<span style="font-size:.72rem;font-weight:700;color:var(--tx3)">📅 ${dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} ${r.time||''}</span>`:''}
+            <span style="font-size:.72rem;font-weight:700;color:var(--acc)">↺ ${r.repeat}</span>
+            <span style="font-size:.72rem;font-weight:700;color:${r.active?'var(--green)':'var(--tx4)'}">${r.active?'● Active':'● Paused'}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <div class="ic-btn" onclick="toggleReminderActive('${r.id}')" title="${r.active?'Pause':'Enable'}">${r.active?'⏸':'▶'}</div>
+          <div class="ic-btn del" onclick="deleteCustomReminder('${r.id}')" title="Delete">✕</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderReminderHistory(){
+  const hist=getRmHistory();
+  const el=document.getElementById('reminderHistory');
+  if(!el)return;
+  el.innerHTML=hist.length?hist.slice(0,10).map(h=>`
+    <div style="display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:1rem">🔔</span>
+      <div style="flex:1"><div style="font-size:.88rem;font-weight:700;color:var(--tx)">${E(h.msg)}</div></div>
+      <span style="font-size:.72rem;color:var(--tx4)">${new Date(h.time).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+    </div>`).join('')
+  :`<div style="text-align:center;padding:22px;color:var(--tx3);font-size:.9rem">No reminder history yet.</div>`;
+}
+
+function clearReminderHistory(){
+  S(`rm_history_${cu.email}`,[]);
+  renderReminderHistory();
+  toast('History cleared.','info');
+}
+
+function updateReminderBadge(count){
+  const auto=count!==undefined?count:generateAutoReminders().filter(r=>r.type==='urgent').length;
+  const badge=document.getElementById('reminderBadge');
+  if(badge){badge.style.display=auto>0?'flex':'none';badge.textContent=auto;}
+}
+
+// Init reminders on app start
+function initReminders(){
+  if(!cu)return;
+  // Reschedule all active custom reminders
+  getCustomReminders().filter(r=>r.active&&!r.triggered).forEach(scheduleNotification);
+  // Check auto reminders every 5 mins
+  setInterval(()=>{
+    const urgent=generateAutoReminders().filter(r=>r.type==='urgent');
+    urgent.forEach(r=>{
+      const lastShown=parseInt(localStorage.getItem('rm_shown_'+r.id)||'0');
+      if(Date.now()-lastShown>3600000){ // Show max once per hour
+        sendBrowserNotif('⚠️ '+r.title,r.msg);
+        localStorage.setItem('rm_shown_'+r.id,Date.now());
+      }
+    });
+    updateReminderBadge();
+  },300000);
+}
 </script>
 </body>
 </html>
