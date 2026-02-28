@@ -1908,10 +1908,7 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
 
   <!-- PENDING CHALLENGES -->
   <div class="card">
-    <div class="c-hd">
-      <div><div class="c-title">📨 Challenges</div><div class="c-sub">Sent & received quiz battles</div></div>
-      <button class="ic-btn" onclick="renderPendingChallenges();toast('✅ Refreshed!','info')" title="Refresh challenges" style="font-size:1rem">🔄</button>
-    </div>
+    <div class="c-hd"><div class="c-title">📨 Pending Challenges</div></div>
     <div id="pendingChallenges"></div>
   </div>
 </div>
@@ -3961,16 +3958,6 @@ function endQuiz(){
   const xpEarned=quizScore*10+Math.floor(pct/10)*5;addXP(xpEarned,'Quiz Completed');
   const hist=G(`quizHist_${cu.email}`)||[];hist.push({subject:quizSubject,score:quizScore,total:quizQs.length,date:Date.now()});S(`quizHist_${cu.email}`,hist);
   addNotif(`Quiz "${quizSubject}": ${quizScore}/${quizQs.length} (${pct}%)`);checkBadges();
-
-  // 🔑 Update challenge score if this quiz was from a challenge
-  if(quizSubject){
-    updateChallengeScore(quizSubject, pct);
-    if(window._pendingChallengeId){
-      toast(`⚔️ Challenge score submitted: ${pct}%!`,'success');
-      window._pendingChallengeId = null;
-    }
-  }
-
   // Show recent scores
   const recentEl=document.getElementById('quizTopScores');
   const recent=hist.slice(-5).reverse();
@@ -5493,53 +5480,18 @@ function genFriendCode(email){
 
 function getFriends(){return G(`friends_${cu?.email||''}`)||[];}
 function saveFriends(f){S(`friends_${cu?.email||''}`,f);}
-
-/* Challenges stored PER USER — challenger writes to OPPONENT's inbox key */
-function getMyChallenges(){return G(`challenges_${cu?.email||''}`)||[];}
-function saveMyChallenges(c){S(`challenges_${cu?.email||''}`,c);}
-
-/* Write challenge directly to opponent's inbox key so they see it when they open the app */
-function deliverChallengeToOpponent(ch, opponentEmail){
-  const key = `challenges_${opponentEmail}`;
-  const inbox = G(key)||[];
-  // Check not duplicate
-  if(!inbox.find(c=>c.id===ch.id)){
-    inbox.unshift(ch);
-    S(key, inbox);
-  }
-}
-
-/* Get real XP for any user by email */
-function getXPforUser(email){
-  return G(`xp_${email}`) || 0;
-}
-
-/* Find user email from friend code */
-function findEmailByCode(code){
-  const users = G('sb_users')||{};
-  const found = Object.values(users).find(u=>genFriendCode(u.email)===code);
-  return found ? found.email : null;
-}
+function getChallenges(){return G(`challenges_${cu?.email||''}`)||[];}
+function saveChallenges(c){S(`challenges_${cu?.email||''}`,c);}
 
 function renderFriends(){
   const myCode=genFriendCode(cu.email);
   const xp=getXP();const lv=getLvl(xp);const idx=getLvlIdx(xp);
-  _applyAv(document.getElementById('friendMyAv'), getAvatar(cu.email), cu.name, null);
+  document.getElementById('friendMyAv').textContent=cu.name.charAt(0).toUpperCase();
   document.getElementById('friendMyName').textContent=cu.name;
   document.getElementById('friendMyLevel').textContent='Level '+(idx+1)+' '+lv.name+' '+lv.emoji+' · '+xp+' XP';
   document.getElementById('myFriendCode').textContent=myCode;
 
-  // Sync real XP for all friends before rendering
-  const friends=getFriends().map(f=>{
-    const fEmail = findEmailByCode(f.code);
-    if(fEmail){
-      f.xp = getXPforUser(fEmail);
-      f.name = (G('sb_users')||{})[fEmail]?.name || f.name;
-    }
-    return f;
-  });
-  saveFriends(friends);
-
+  const friends=getFriends();
   document.getElementById('friendCount').textContent=friends.length+' friend'+(friends.length!==1?'s':'');
 
   // Friends list
@@ -5549,16 +5501,16 @@ function renderFriends(){
       <div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--acc),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:1rem;flex-shrink:0">${f.name.charAt(0).toUpperCase()}</div>
       <div style="flex:1">
         <div style="font-weight:800;font-size:.9rem;color:var(--tx)">${E(f.name)}</div>
-        <div style="font-size:.74rem;color:var(--tx3)">${f.grade||'Student'} · Code: ${f.code} · ${(f.xp||0).toLocaleString()} XP</div>
+        <div style="font-size:.74rem;color:var(--tx3)">${f.grade||'Student'} · Code: ${f.code}</div>
       </div>
       <div class="ic-btn del" onclick="removeFriend('${f.code}')">✕</div>
     </div>`).join('')
   :`<div class="empty-s"><span class="ei">👥</span><div class="et">No friends yet</div><div class="es">Share your code to connect!</div></div>`;
 
-  // Leaderboard with REAL XP
-  const myEntry={name:cu.name+' (You)',xp:getXP(),av:cu.name.charAt(0).toUpperCase(),you:true};
-  const friendEntries=friends.map(f=>({name:f.name,xp:f.xp||0,av:f.name.charAt(0).toUpperCase(),you:false}));
-  const lb=[myEntry,...friendEntries].sort((a,b)=>b.xp-a.xp);
+  // Leaderboard with friends + self
+  const myEntry={name:cu.name+'(You)',xp:getXP(),av:cu.name.charAt(0).toUpperCase(),you:true};
+  const mockFriendXP=friends.map(f=>({name:f.name,xp:f.xp||Math.floor(Math.random()*2000+100),av:f.name.charAt(0).toUpperCase(),you:false}));
+  const lb=[myEntry,...mockFriendXP].sort((a,b)=>b.xp-a.xp);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('friendsLeaderboard').innerHTML=lb.length>1?lb.map((p,i)=>`
     <div class="lb-row${p.you?' you-row':''}">
@@ -5592,35 +5544,25 @@ function addFriend(){
   const inp=document.getElementById('friendCodeInp');
   const code=inp.value.trim().toUpperCase();
   if(!code.startsWith('SBP-')||code.length!==8)return toast('Invalid friend code! Format: SBP-XXXX','error');
-  if(code===genFriendCode(cu.email))return toast('That\'s your own code! 😄','error');
+  if(code===genFriendCode(cu.email))return toast('That\'s your own code!','error');
   const friends=getFriends();
   if(friends.find(f=>f.code===code))return toast('Already added!','error');
 
-  // Find user with this code in sb_users
+  // Find user with this code
   const users=G('sb_users')||{};
   const found=Object.values(users).find(u=>genFriendCode(u.email)===code);
 
   if(found){
-    const realXP = getXPforUser(found.email);
-    friends.push({name:found.name,code,grade:found.grade||'Student',xp:realXP,email:found.email,added:Date.now()});
+    friends.push({name:found.name,code,grade:found.grade||'Student',xp:0,added:Date.now()});
     saveFriends(friends);inp.value='';
     toast('🎉 '+found.name+' added as friend!','success');
     addXP(15,'Added Friend');
-    addNotif('🎉 You added '+found.name+' as a friend!');
     document.getElementById('friendBadge').style.display='flex';
-
-    // Also add self to their friends list (mutual add)
-    const myCode = genFriendCode(cu.email);
-    const theirFriends = G(`friends_${found.email}`)||[];
-    if(!theirFriends.find(f=>f.code===myCode)){
-      theirFriends.push({name:cu.name,code:myCode,grade:cu.grade||'Student',xp:getXP(),email:cu.email,added:Date.now()});
-      S(`friends_${found.email}`, theirFriends);
-    }
   } else {
-    // User not on same device — add as pending
-    friends.push({name:'Friend '+code.slice(-4),code,grade:'Student',xp:0,added:Date.now()});
+    // Add as unknown friend (they might not be on same device)
+    friends.push({name:'Friend '+code.slice(-4),code,grade:'Student',xp:Math.floor(Math.random()*1500+200),added:Date.now()});
     saveFriends(friends);inp.value='';
-    toast('Friend added! They\'ll sync when they log in on this device.','info');
+    toast('Friend added! They\'ll appear when they join.','success');
     addXP(15,'Added Friend');
   }
   renderFriends();
@@ -5640,44 +5582,19 @@ function sendBattleChallenge(){
   const friend=getFriends().find(f=>f.code===friendCode);
   if(!friend)return toast('Friend not found!','error');
 
-  // Create challenge object
-  const myCode = genFriendCode(cu.email);
-  const ch={
-    id: Date.now().toString(),
-    subject: subj,
-    challenger: cu.name,
-    challengerCode: myCode,
-    challengerEmail: cu.email,
-    challengerXP: null,
-    opponent: friend.name,
-    opponentCode: friendCode,
-    opponentXP: null,
-    status: 'pending',
-    created: Date.now()
-  };
-
-  // Save to MY challenges
-  const myChallenges = getMyChallenges();
-  myChallenges.unshift(ch);
-  saveMyChallenges(myChallenges);
-
-  // 🔑 KEY FIX: Write to OPPONENT's challenge inbox (same browser localStorage)
-  const opponentEmail = findEmailByCode(friendCode) || friend.email;
-  if(opponentEmail){
-    const incomingCh = {...ch, status:'incoming', direction:'received'};
-    deliverChallengeToOpponent(incomingCh, opponentEmail);
-    toast(`⚔️ Challenge sent to ${friend.name}! Take the quiz to set your score.`,'success');
-    addNotif('⚔️ Challenge sent to '+friend.name+' for '+subj+'!');
-  } else {
-    toast(`⚔️ Challenge sent! Note: ${friend.name} must be on the same device to receive it.`,'info');
-  }
-
+  // Simulate a battle — take quiz and compare
+  toast(`⚔️ Challenge sent to ${friend.name}! Take the quiz to set your score.`,'success');
   addXP(10,'Quiz Battle Started');
 
-  // Auto-start quiz for challenger
+  // Store challenge
+  const challenges=getChallenges();
+  const ch={id:Date.now().toString(),subject:subj,challenger:cu.name,challengerXP:null,opponent:friend.name,opponentCode:friendCode,opponentXP:null,status:'pending',created:Date.now()};
+  challenges.unshift(ch);saveChallenges(challenges);
+
+  // Auto-start quiz
   setTimeout(()=>{
     quizSubject=subj;
-    const qa=QUIZ_DATA[subj]?.questions||QUIZ_DATA['Mathematics'].questions;
+    const qa=QUIZ_DATA[subj].questions;
     quizQs=[...qa].sort(()=>Math.random()-.5).slice(0,10);
     quizIdx=0;quizScore=0;quizAnswered=false;
     navigate('quiz');
@@ -5687,105 +5604,20 @@ function sendBattleChallenge(){
   },1000);
 }
 
-/* Called when user completes a quiz — update any pending challenges */
-function updateChallengeScore(subject, score){
-  const myCode = genFriendCode(cu.email);
-  const challenges = getMyChallenges().map(ch=>{
-    if(ch.status==='pending' && ch.subject===subject && ch.challengerCode===myCode){
-      ch.challengerXP = score;
-      ch.status = ch.opponentXP !== null ? 'complete' : 'waiting';
-      // Update opponent's copy too
-      const oppEmail = findEmailByCode(ch.opponentCode) || ch.opponentEmail;
-      if(oppEmail){
-        const oppChallenges = G(`challenges_${oppEmail}`)||[];
-        const oppCh = oppChallenges.find(c=>c.id===ch.id);
-        if(oppCh){ oppCh.challengerXP=score; oppCh.status=ch.status; S(`challenges_${oppEmail}`,oppChallenges); }
-      }
-    }
-    if(ch.status==='incoming' && ch.subject===subject && ch.opponentCode===myCode){
-      ch.opponentXP = score;
-      ch.status = ch.challengerXP !== null ? 'complete' : 'submitted';
-      // Update challenger's copy
-      const chalEmail = findEmailByCode(ch.challengerCode) || ch.challengerEmail;
-      if(chalEmail){
-        const chalChallenges = G(`challenges_${chalEmail}`)||[];
-        const chalCh = chalChallenges.find(c=>c.id===ch.id);
-        if(chalCh){ chalCh.opponentXP=score; chalCh.status=ch.status; S(`challenges_${chalEmail}`,chalChallenges); }
-      }
-    }
-    return ch;
-  });
-  saveMyChallenges(challenges);
-}
-
 function renderPendingChallenges(){
-  const myCode = genFriendCode(cu.email);
-
-  // Check incoming challenges from others
-  const allChallenges = getMyChallenges();
-
-  // Count unread incoming
-  const incoming = allChallenges.filter(c=>c.status==='incoming'&&c.opponentCode===myCode);
-  if(incoming.length){
-    addNotif(`⚔️ You have ${incoming.length} quiz challenge${incoming.length>1?'s':''}! Go to Friends to respond.`);
-  }
-
+  const challenges=getChallenges();
   const el=document.getElementById('pendingChallenges');
   if(!el)return;
-
-  if(!allChallenges.length){
-    el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--tx3);font-size:.9rem">No active challenges. Challenge a friend above!</div>`;
-    return;
-  }
-
-  el.innerHTML=allChallenges.slice(0,8).map(c=>{
-    const isIncoming = c.status==='incoming' && c.opponentCode===myCode;
-    const statusColor = c.status==='complete'?'var(--green)':isIncoming?'var(--red)':'var(--amber)';
-    const statusBg = c.status==='complete'?'var(--green-bg)':isIncoming?'var(--red-bg)':'var(--amber-bg)';
-    const statusLabel = c.status==='complete'?'Complete':isIncoming?'🔥 Accept!':c.status==='waiting'?'Waiting':'Pending';
-
-    const resultHtml = c.status==='complete'
-      ? `<div style="font-size:.72rem;color:var(--tx3);margin-top:3px">
-           You: ${c.challengerCode===myCode?c.challengerXP:c.opponentXP}% · 
-           Opp: ${c.challengerCode===myCode?c.opponentXP:c.challengerXP}%
-           ${(c.challengerCode===myCode?c.challengerXP:c.opponentXP) > (c.challengerCode===myCode?c.opponentXP:c.challengerXP) ? ' 🏆 You won!' : ' 💪 Keep trying!'}
-         </div>` : '';
-
-    return `<div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:1.4rem">${isIncoming?'🔥':'⚔️'}</div>
-      <div style="flex:1;min-width:0">
+  el.innerHTML=challenges.length?challenges.slice(0,5).map(c=>`
+    <div style="display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:1.3rem">⚔️</div>
+      <div style="flex:1">
         <div style="font-weight:800;font-size:.88rem;color:var(--tx)">${E(c.subject)} Battle</div>
-        <div style="font-size:.75rem;color:var(--tx3)">${isIncoming?'From: '+E(c.challenger):'vs '+E(c.opponent)} · ${new Date(c.created).toLocaleDateString()}</div>
-        ${resultHtml}
+        <div style="font-size:.75rem;color:var(--tx3)">vs ${E(c.opponent)} · ${new Date(c.created).toLocaleDateString()}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-        <span style="padding:4px 10px;border-radius:100px;font-size:.7rem;font-weight:800;background:${statusBg};color:${statusColor};white-space:nowrap">${statusLabel}</span>
-        ${isIncoming?`<button class="btn btn-p btn-sm" onclick="acceptChallenge('${c.id}','${c.subject}')">Take Quiz</button>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function acceptChallenge(id, subject){
-  const challenges = getMyChallenges().map(c=>{
-    if(c.id===id) c.status='accepted';
-    return c;
-  });
-  saveMyChallenges(challenges);
-
-  toast(`⚔️ Accepting ${subject} challenge! Starting quiz...`,'success');
-  setTimeout(()=>{
-    quizSubject=subject;
-    const qa=QUIZ_DATA[subject]?.questions||QUIZ_DATA['Mathematics'].questions;
-    quizQs=[...qa].sort(()=>Math.random()-.5).slice(0,10);
-    quizIdx=0;quizScore=0;quizAnswered=false;
-    // Store pending challenge id so quiz completion can update score
-    window._pendingChallengeId = id;
-    navigate('quiz');
-    document.getElementById('quizSubjectSelect').style.display='none';
-    document.getElementById('quizArea').classList.add('show');
-    renderQuizQ();
-  },800);
+      <span style="padding:4px 12px;border-radius:100px;font-size:.72rem;font-weight:800;background:var(--amber-bg);color:var(--amber)">${c.status}</span>
+    </div>`).join('')
+  :`<div style="text-align:center;padding:22px;color:var(--tx3);font-size:.9rem">No active challenges. Challenge a friend!</div>`;
 }
 
 /* ═══════════════ GLOBAL SEARCH ═══════════════ */
