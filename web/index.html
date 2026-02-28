@@ -199,12 +199,12 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
 .app-body{flex:1;display:grid;grid-template-columns:66px 1fr;overflow:hidden;transition:grid-template-columns .35s cubic-bezier(.4,0,.2,1)}
 .app-body.sb-open{grid-template-columns:272px 1fr}
 
-.topbar{height:68px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:13px;flex-shrink:0;z-index:40;transition:background .4s}
+.topbar{height:68px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:13px;flex-shrink:0;z-index:40;transition:background .4s;min-width:0}
 .topbar-hamburger{width:40px;height:40px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:transparent;color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;transition:all var(--tr);flex-shrink:0}
 .topbar-hamburger:hover{background:var(--surface2);color:var(--tx);transform:scale(1.05)}
-.topbar-title{font-family:var(--font-d);font-weight:800;font-size:1.18rem;flex:1;color:var(--tx)}
-.topbar-right{display:flex;align-items:center;gap:9px}
-.tb-ic-btn{width:40px;height:40px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:transparent;color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--tr);position:relative;font-size:1rem}
+.topbar-title{font-family:var(--font-d);font-weight:800;font-size:1.18rem;flex:1;min-width:0;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-right{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.tb-ic-btn{width:40px;height:40px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:transparent;color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--tr);position:relative;font-size:1rem;flex-shrink:0}
 .tb-ic-btn:hover{background:var(--surface2);color:var(--tx);transform:scale(1.05)}
 .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid var(--surface);display:none;animation:pulse 1.5s infinite}
 .notif-dot.show{display:block}
@@ -670,16 +670,31 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
 /* RESPONSIVE */
 @media(max-width:1100px){.dash-main{grid-template-columns:1fr}.dash-bottom{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.grid-2,.grid-4,.form-row{grid-template-columns:1fr}.dash-bottom{grid-template-columns:1fr}.notes-layout{grid-template-columns:1fr}.notes-sidebar{position:static}#accountPage .grid-2{grid-template-columns:1fr !important}#accountPage .card[style*="grid-column:1/-1"]{grid-column:1 !important}}
+
+/* ═══════════════════════════════════
+   768px — MOBILE LAYOUT
+═══════════════════════════════════ */
 @media(max-width:768px){
+  /* App structure */
   .app-body{grid-template-columns:1fr !important}
-  .sidebar{position:fixed;left:-280px;top:0;height:100vh;width:280px;z-index:200;transition:left .3s cubic-bezier(.4,0,.2,1)}
+  .sidebar{position:fixed;left:-280px;top:0;height:100vh;width:280px;z-index:200;transition:left .3s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-xl)}
   .sidebar.open{left:0}.app-body.sb-open .sidebar{left:0}
   .sidebar .sb-logo-txt,.sidebar .sb-lbl,.sidebar .sb-user-info,.sidebar .sb-section-lbl,.sidebar .sb-logout,.sidebar .sb-xp-wrap{opacity:1 !important}
   .bottom-nav{display:block}
   .page{padding:12px;padding-bottom:90px}
-  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px}
-  .topbar-title{font-size:1rem}
-  .content{padding-top:60px}
+
+  /* ── TOPBAR FIX (core fix for vertical text bug) ── */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:58px;padding:0 10px;gap:7px;min-width:0}
+  .topbar-hamburger{width:36px;height:36px;flex-shrink:0}
+  .topbar-title{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+  .topbar-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+  .tb-ic-btn{width:34px;height:34px;font-size:.9rem;flex-shrink:0}
+  .kb-badge{display:none !important}
+  .user-pill{padding:4px 8px 4px 4px;flex-shrink:0}
+  .user-pill-name{display:none}
+  .content{padding-top:58px}
+
+  /* Landing */
   .land-nav{padding:0 16px;height:60px}
   .hero{padding:70px 16px 50px}
   .hero-stats{gap:20px}
@@ -688,66 +703,96 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
   .btn-hero-prim,.btn-hero-sec{padding:14px 28px;font-size:.95rem}
   .feat-section,.how-section,.testimonials-section,.faq-section{padding:44px 16px}
   .land-footer{padding:20px;flex-direction:column;gap:8px;text-align:center}
-  .pomo-wrap{max-width:100%}
   .stats-strip{padding:44px 16px}
+  .features-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .stats-strip-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .hero-btns{flex-direction:column;align-items:center}
+
+  /* Dashboard */
   .dash-main{grid-template-columns:1fr}
   .dash-bottom{grid-template-columns:1fr}
+  .dash-greet{flex-direction:column}
+  #dashXPCard{min-width:unset;width:100%}
+  .tips-ticker{padding:10px 14px;gap:10px}
+
+  /* Cards & layout */
+  .card{padding:16px}
   .grid-2{grid-template-columns:1fr}
-  #friendsPage .grid-2{grid-template-columns:1fr !important}
-  #friendsPage [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
-  .modal-box{max-width:100% !important;margin:0 10px}
   .grid-4{grid-template-columns:1fr 1fr}
   .kpi-row{grid-template-columns:1fr 1fr;gap:10px}
   .kpi{padding:14px}
   .kpi-v{font-size:1.7rem}
-  .card{padding:16px}
   .page-title{font-size:1.4rem}
   .page-sub{font-size:.88rem}
-  .modal-box{padding:22px 18px}
+
+  /* Modals */
+  .modal-box{max-width:100% !important;margin:0 10px;padding:22px 18px}
+
+  /* Auth */
   .auth-card{padding:28px 20px}
   #accountPage>div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;display:flex !important;flex-direction:column !important}
   #accountPage .card[style*="grid-column:1/-1"]{width:100%}
   .av-preview{width:70px;height:70px;border-radius:20px}
   .av-grid{grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}
+
+  /* Pomodoro */
+  .pomo-wrap{max-width:100%}
   .pomo-ring-w{width:200px;height:200px}
   .pomo-svg{width:200px;height:200px}
   .pomo-t{font-size:3rem}
   .pomo-modes{flex-wrap:wrap;gap:5px}
   .pomo-mode-btn{padding:8px 14px;font-size:.8rem}
-  .ai-tools-nav{gap:6px}
-  .ai-tool-tab{padding:7px 13px;font-size:.8rem}
-  .tasks-grid{grid-template-columns:1fr}
-  .notes-layout{grid-template-columns:1fr}
-  .notes-sidebar{position:static;margin-bottom:14px}
-  .quiz-subjects{grid-template-columns:1fr 1fr}
-  #battleSubj,#battleFriend{width:100%}
-  #friendsPage [style*="grid-template-columns:1fr 1fr;gap:13px"]{grid-template-columns:1fr !important}
-  .perf-stats{grid-template-columns:1fr 1fr}
-  .goals-grid{grid-template-columns:1fr}
-  .features-grid{grid-template-columns:1fr}
-  .testi-grid{grid-template-columns:1fr}
-  .steps-grid{grid-template-columns:1fr 1fr}
-  .stats-strip-grid{grid-template-columns:1fr 1fr;gap:24px}
-  .form-row{grid-template-columns:1fr}
-  .user-pill-name{display:none}
-  .tb-ic-btn{width:36px;height:36px}
-  .topbar-hamburger{width:36px;height:36px}
-  #dashXPCard{min-width:unset;width:100%}
-  .dash-greet{flex-direction:column}
-  .music-widget{padding:18px}
   .pomo-stats{grid-template-columns:repeat(3,1fr);gap:8px}
   .pomo-stat-v{font-size:1.3rem}
+
+  /* Tasks & forms */
+  .tasks-grid{grid-template-columns:1fr}
   .add-form{max-width:100%}
   .toolbar{flex-direction:column;align-items:stretch}
   .search-w{min-width:unset}
   .fc-row{justify-content:flex-start}
-  .hero-btns{flex-direction:column;align-items:center}
-  .result-big{font-size:2.2rem}
+  .form-row{grid-template-columns:1fr}
+
+  /* Notes */
+  .notes-layout{grid-template-columns:1fr}
+  .notes-sidebar{position:static;margin-bottom:14px}
+
+  /* Quiz */
+  .quiz-subjects{grid-template-columns:1fr 1fr}
   .quiz-result-score{font-size:3.5rem}
-  .tips-ticker{padding:10px 14px;gap:10px}
+  .result-big{font-size:2.2rem}
+
+  /* Friends */
+  #friendsPage .grid-2{grid-template-columns:1fr !important}
+  #friendsPage [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+  #friendsPage [style*="grid-template-columns:1fr 1fr;gap:13px"]{grid-template-columns:1fr !important}
+  #battleSubj,#battleFriend{width:100%}
+
+  /* Performance */
+  .perf-stats{grid-template-columns:1fr 1fr}
+  .goals-grid{grid-template-columns:1fr}
+
+  /* AI tools */
+  .ai-tools-nav{gap:6px}
+  .ai-tool-tab{padding:7px 13px;font-size:.8rem}
+
+  /* Music */
+  .music-widget{padding:18px}
 }
 
+/* ═══════════════════════════════════
+   520px — SMALL MOBILE
+═══════════════════════════════════ */
 @media(max-width:520px){
+  /* Topbar — tighter */
+  .topbar{padding:0 8px;gap:5px;height:54px}
+  .topbar-title{font-size:.88rem}
+  .topbar-hamburger,.tb-ic-btn{width:32px;height:32px;font-size:.85rem}
+  .topbar-right{gap:4px}
+  .content{padding-top:54px}
+
   .kpi-row{grid-template-columns:1fr 1fr;gap:8px}
   .kpi{padding:12px}
   .kpi-v{font-size:1.5rem}
@@ -776,9 +821,17 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
   #subjectRingRow{grid-template-columns:1fr 1fr 1fr}
   .badge-card{padding:14px}
   .badge-ic{font-size:2rem}
+  /* Hide focus & theme buttons to give title more space */
+  #focusBtn,#themeBtn2{display:none}
 }
 
+/* ═══════════════════════════════════
+   380px — TINY PHONES
+═══════════════════════════════════ */
 @media(max-width:380px){
+  .topbar{padding:0 6px;gap:4px}
+  .topbar-title{font-size:.82rem}
+  .topbar-hamburger,.tb-ic-btn{width:30px;height:30px;font-size:.8rem}
   .kpi-row{grid-template-columns:1fr 1fr}
   .hero-h1{font-size:1.8rem}
   .pomo-t{font-size:2.2rem}
@@ -1057,9 +1110,9 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
       <button class="tb-ic-btn" id="themeBtn2" onclick="toggleTheme()">🌙</button>
       <button class="tb-ic-btn" onclick="openGlobalSearch()" title="Search (Ctrl+K)" style="position:relative">
   🔍
-  <span style="position:absolute;bottom:-1px;right:-1px;font-size:.45rem;font-family:var(--font-mono);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 3px;color:var(--tx4)">⌘K</span>
+  <span class="kb-badge" style="position:absolute;bottom:-1px;right:-1px;font-size:.45rem;font-family:var(--font-mono);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 3px;color:var(--tx4)">⌘K</span>
 </button>
-<button class="tb-ic-btn" onclick="enterFocus()" title="Focus Mode">🎯</button>
+<button class="tb-ic-btn" id="focusBtn" onclick="enterFocus()" title="Focus Mode">🎯</button>
       <div class="user-pill" onclick="navigate('account')">
         <div id="tbAvatar" onclick="openAvatarModal()" title="Change avatar" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem;cursor:pointer;overflow:hidden;flex-shrink:0;transition:transform .2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform=''"></div>
         <div class="user-pill-av" id="tbAv" style="display:none">?</div>
