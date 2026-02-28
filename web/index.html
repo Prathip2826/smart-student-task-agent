@@ -1061,7 +1061,7 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
 </button>
 <button class="tb-ic-btn" onclick="enterFocus()" title="Focus Mode">🎯</button>
       <div class="user-pill" onclick="navigate('account')">
-        <div id="tbAvatar" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem"></div>
+        <div id="tbAvatar" onclick="openAvatarModal()" title="Change avatar" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem;cursor:pointer;overflow:hidden;flex-shrink:0;transition:transform .2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform=''"></div>
         <div class="user-pill-av" id="tbAv" style="display:none">?</div>
         <div class="user-pill-name" id="tbName">User</div>
       </div>
@@ -2022,41 +2022,74 @@ button,input,select,textarea{font-family:var(--font)}a{color:var(--acc);text-dec
 
 <!-- AVATAR CUSTOMIZER MODAL -->
 <div class="modal-ov" id="avatarModal" onclick="if(event.target===this)closeModal('avatarModal')">
-  <div class="modal-box" style="max-width:520px">
+  <div class="modal-box" style="max-width:500px">
     <div class="modal-hd">
       <div class="modal-title">✏️ Customize Avatar</div>
       <button class="modal-cls" onclick="closeModal('avatarModal')">✕</button>
     </div>
 
     <!-- LIVE PREVIEW -->
-    <div style="text-align:center;padding:20px 0 24px;border-bottom:1px solid var(--border);margin-bottom:22px">
-      <div class="av-preview" id="avPreview"></div>
+    <div style="text-align:center;padding:18px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <div style="position:relative;display:inline-block;margin-bottom:8px">
+        <div class="av-preview" id="avPreview" style="overflow:hidden"></div>
+        <div onclick="document.getElementById('avPhotoInput').click()" title="Upload photo" style="position:absolute;bottom:-5px;right:-5px;width:26px;height:26px;border-radius:8px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.2)">📷</div>
+      </div>
       <div style="font-size:.78rem;color:var(--tx3);font-weight:700" id="avPreviewName">Your Avatar</div>
     </div>
 
+    <!-- HIDDEN FILE INPUT -->
+    <input type="file" id="avPhotoInput" accept="image/*" style="display:none" onchange="handleAvatarPhoto(this)"/>
+
     <!-- TABS -->
-    <div style="display:flex;gap:9px;margin-bottom:20px">
-      <button class="av-tab active" id="avTabEmoji" onclick="switchAvTab('emoji')">😎 Emoji</button>
-      <button class="av-tab" id="avTabInitials" onclick="switchAvTab('initials')">🔤 Initials</button>
+    <div style="display:flex;gap:7px;margin-bottom:18px">
+      <button class="av-tab" id="avTabPhoto" onclick="switchAvTab('photo')" style="flex:1;text-align:center">📷 Photo</button>
+      <button class="av-tab active" id="avTabEmoji" onclick="switchAvTab('emoji')" style="flex:1;text-align:center">😎 Emoji</button>
+      <button class="av-tab" id="avTabInitials" onclick="switchAvTab('initials')" style="flex:1;text-align:center">🔤 Text</button>
+    </div>
+
+    <!-- PHOTO PANEL -->
+    <div id="avPhotoPanel" style="display:none">
+      <!-- Upload zone (shown when no photo) -->
+      <div id="avDropZone" style="border:2px dashed var(--border2);border-radius:var(--r-lg);padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2)"
+        onclick="document.getElementById('avPhotoInput').click()"
+        ondragover="event.preventDefault();this.style.borderColor='var(--acc)';this.style.background='var(--acc-bg)'"
+        ondragleave="this.style.borderColor='var(--border2)';this.style.background='var(--surface2)'"
+        ondrop="event.preventDefault();this.style.borderColor='var(--border2)';this.style.background='var(--surface2)';handleAvatarDrop(event)">
+        <div style="font-size:2.6rem;margin-bottom:10px">📸</div>
+        <div style="font-weight:800;font-size:.95rem;color:var(--tx);margin-bottom:6px">Upload your photo</div>
+        <div style="font-size:.82rem;color:var(--tx3);margin-bottom:16px;line-height:1.6">Tap to choose from gallery<br>or drag &amp; drop here · JPG, PNG, GIF</div>
+        <button class="btn btn-p btn-sm" onclick="event.stopPropagation();document.getElementById('avPhotoInput').click()">📂 Choose Photo</button>
+      </div>
+      <!-- Photo preview (shown after upload) -->
+      <div id="avPhotoPreviewRow" style="display:none">
+        <div style="display:flex;align-items:center;gap:13px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);padding:14px 16px">
+          <div id="avPhotoThumb" style="width:54px;height:54px;border-radius:13px;overflow:hidden;flex-shrink:0;background:var(--surface2)"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:.9rem;color:var(--green);margin-bottom:3px">✅ Photo ready!</div>
+            <div style="font-size:.78rem;color:var(--tx3)" id="avPhotoFileName">photo.jpg</div>
+          </div>
+          <button class="ic-btn del" onclick="clearAvatarPhoto()" title="Remove">✕</button>
+        </div>
+      </div>
     </div>
 
     <!-- EMOJI PANEL -->
     <div id="avEmojiPanel">
-      <div style="font-size:.75rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Choose Emoji</div>
+      <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Choose Emoji</div>
       <div class="av-grid" id="avEmojiGrid"></div>
-      <div style="font-size:.75rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px">Background Color</div>
-      <div style="display:flex;gap:9px;flex-wrap:wrap" id="avColorRowEmoji"></div>
+      <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">Background Color</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="avColorRowEmoji"></div>
     </div>
 
     <!-- INITIALS PANEL -->
     <div id="avInitialsPanel" style="display:none">
-      <div style="font-size:.75rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Custom Initials (max 2 chars)</div>
-      <input type="text" id="avInitialsInp" class="form-inp" maxlength="2" placeholder="e.g. AB" style="text-transform:uppercase;font-size:1.2rem;font-weight:900;letter-spacing:6px;text-align:center;max-width:160px" oninput="updateAvPreview()"/>
-      <div style="font-size:.75rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px">Background Color</div>
-      <div style="display:flex;gap:9px;flex-wrap:wrap" id="avColorRowInitials"></div>
+      <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Custom Text (max 2 chars)</div>
+      <input type="text" id="avInitialsInp" class="form-inp" maxlength="2" placeholder="e.g. AB" style="text-transform:uppercase;font-size:1.3rem;font-weight:900;letter-spacing:8px;text-align:center;max-width:150px" oninput="updateAvPreview()"/>
+      <div style="font-size:.72rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">Background Color</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="avColorRowInitials"></div>
     </div>
 
-    <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:22px" onclick="saveAvatarChanges()">💾 Save Avatar</button>
+    <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:22px;padding:14px;font-size:1rem" onclick="saveAvatarChanges()">💾 Save Avatar</button>
   </div>
 </div>
 
@@ -2568,8 +2601,8 @@ function handleLogout(){localStorage.removeItem('sb_sess');cu=null;document.getE
 const AV_EMOJIS=[
   '😎','🦊','🐯','🦁','🐉','🦋','🌟','🔥','💎','🚀',
   '🎯','⚡','🧠','📚','🎓','🏆','💪','🌈','🎮','🎨',
-  '🐼','🦄','🐸','🦅','🐺','🦊','🐻','🦉','🐬','🦋',
-  '🌙','☀️','❄️','🌊','🍀','🌸','🎵','🎸','⚽','🏀',
+  '🐼','🦄','🐸','🦅','🐺','🐻','🦉','🐬','🌙','☀️',
+  '❄️','🌊','🍀','🌸','🎵','🎸','⚽','🏀','🎭','🦸',
 ];
 
 const AV_COLORS=[
@@ -2589,66 +2622,103 @@ const AV_COLORS=[
 
 function getAvatar(email){
   const key=`avatar_${email||cu?.email||''}`;
-  return G(key)||{type:'initials',emoji:'😎',color:AV_COLORS[0].value,initials:''};
+  return G(key)||{type:'emoji',emoji:'😎',color:AV_COLORS[0].value,initials:'',photo:''};
 }
 
 function saveAvatar(av){
   S(`avatar_${cu.email}`,av);
 }
 
-function renderAvatarEl(email,size='md'){
-  const av=getAvatar(email||cu?.email);
-  const name=(email?((G('sb_users')||{})[email]?.name||'?'):cu?.name)||'?';
-  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  const sizeClass=size==='sm'?'sm':size==='lg'?'lg':'';
-  if(av.type==='emoji'){
-    return `<div class="av-big ${sizeClass}" style="background:${av.color};font-size:${size==='sm'?'1.1rem':size==='lg'?'2.2rem':'1.5rem'}">${av.emoji}</div>`;
+/* ── apply avatar to ANY element in-place (handles photo / emoji / initials) ── */
+function _applyAv(el, av, name, fsOverride){
+  if(!el) return;
+  const initials = (av.initials||(name||'U').split(' ').map(w=>w[0]).join('')).toUpperCase().slice(0,2);
+  // reset
+  el.innerHTML = '';
+  el.style.overflow = 'hidden';
+  if(av.type==='photo' && av.photo){
+    el.style.background = 'transparent';
+    el.style.fontSize = '';
+    el.style.color = '';
+    const img = document.createElement('img');
+    img.src = av.photo;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;pointer-events:none';
+    el.appendChild(img);
+  } else if(av.type==='emoji'){
+    el.style.background = av.color;
+    el.style.fontSize = fsOverride || '1.1rem';
+    el.style.color = '';
+    el.textContent = av.emoji;
+  } else {
+    el.style.background = av.color;
+    el.style.fontSize = fsOverride || '.82rem';
+    el.style.color = '#fff';
+    el.textContent = initials;
+  }
+}
+
+function renderAvatarEl(email, size='md'){
+  const av = getAvatar(email||cu?.email);
+  const name = (email?((G('sb_users')||{})[email]?.name||'?'):cu?.name)||'?';
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const sizeClass = size==='sm'?'sm':size==='lg'?'lg':'';
+  const fs = size==='sm'?'1.1rem':size==='lg'?'2.2rem':'1.5rem';
+  if(av.type==='photo'&&av.photo){
+    return `<div class="av-big ${sizeClass}" style="overflow:hidden;padding:0"><img src="${av.photo}" style="width:100%;height:100%;object-fit:cover;display:block"/></div>`;
+  } else if(av.type==='emoji'){
+    return `<div class="av-big ${sizeClass}" style="background:${av.color};font-size:${fs}">${av.emoji}</div>`;
   } else {
     return `<div class="av-big ${sizeClass}" style="background:${av.color};color:#fff">${av.initials||initials}</div>`;
   }
 }
 
-// ✅ Fix - sbAv ஒரு text element, separate avatar div வேணும்
 function updateAllAvatars(){
   try{
-    const av=getAvatar(cu.email);
-    const tbAvatar=document.getElementById('tbAvatar');
-    if(tbAvatar){
-      if(av.type==='emoji'){
-        tbAvatar.style.background=av.color;
-        tbAvatar.style.fontSize='1.1rem';
-        tbAvatar.textContent=av.emoji;
+    if(!cu) return;
+    const av  = getAvatar(cu.email);
+    const name = cu.name||'User';
+
+    /* 1. Topbar avatar (clickable on mobile too) */
+    _applyAv(document.getElementById('tbAvatar'), av, name, av.type==='emoji'?'1.05rem':'.78rem');
+
+    /* 2. Hide old duplicate tbAv span */
+    const tbAv = document.getElementById('tbAv');
+    if(tbAv) tbAv.style.display='none';
+
+    /* 3. Sidebar avatar */
+    const sbAv = document.getElementById('sbAv');
+    if(sbAv){
+      sbAv.style.borderRadius = '12px';
+      _applyAv(sbAv, av, name, av.type==='emoji'?'1.1rem':'.82rem');
+    }
+
+    /* 4. Account page big avatar (keep ✏️ badge) */
+    const accAv = document.getElementById('accAvatar');
+    if(accAv){
+      const badge = '<div style="position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:7px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:.7rem;border:2px solid var(--surface);z-index:2">✏️</div>';
+      accAv.style.overflow = 'hidden';
+      if(av.type==='photo'&&av.photo){
+        accAv.style.background = 'transparent';
+        accAv.style.fontSize = '';
+        accAv.innerHTML = `<img src="${av.photo}" style="width:100%;height:100%;object-fit:cover;display:block"/>${badge}`;
+      } else if(av.type==='emoji'){
+        accAv.style.background = av.color;
+        accAv.style.fontSize = '2.2rem';
+        accAv.style.color = '';
+        accAv.innerHTML = av.emoji + badge;
       } else {
-        const initials=av.initials||cu.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-        tbAvatar.style.background=av.color;
-        tbAvatar.style.fontSize='.85rem';
-        tbAvatar.textContent=initials;
+        const ini = av.initials||(name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2));
+        accAv.style.background = av.color;
+        accAv.style.fontSize = '1.8rem';
+        accAv.style.color = '#fff';
+        accAv.innerHTML = ini + badge;
       }
     }
-    const tbAv=document.getElementById('tbAv');
-    if(tbAv)tbAv.style.display='none';
-    const sbAv=document.getElementById('sbAv');
-    if(sbAv){
-      sbAv.style.background=av.color||'linear-gradient(135deg,var(--acc),var(--purple))';
-      sbAv.style.borderRadius='12px';
-      sbAv.style.display='flex';
-      sbAv.style.alignItems='center';
-      sbAv.style.justifyContent='center';
-      sbAv.textContent=av.type==='emoji'?av.emoji:(av.initials||cu.name.charAt(0).toUpperCase());
-    }
-    const accAv=document.getElementById('accAvatar');
-    if(accAv){
-      const initials2=av.initials||cu.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-      accAv.style.background=av.color||'linear-gradient(135deg,var(--acc),var(--purple))';
-      accAv.style.fontSize=av.type==='emoji'?'2.2rem':'1.8rem';
-      accAv.innerHTML=(av.type==='emoji'?av.emoji:initials2)+'<div style="position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:7px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:.7rem;border:2px solid var(--surface)">✏️</div>';
-    }
-    const friendMyAv=document.getElementById('friendMyAv');
-    if(friendMyAv){
-      friendMyAv.style.background=av.color||'linear-gradient(135deg,var(--acc),var(--purple))';
-      friendMyAv.textContent=av.type==='emoji'?av.emoji:(av.initials||cu.name.charAt(0).toUpperCase());
-    }
-  }catch(e){console.warn('Avatar update error:',e);}
+
+    /* 5. Friends page */
+    _applyAv(document.getElementById('friendMyAv'), av, name);
+
+  }catch(e){ console.warn('Avatar update error:', e); }
 }
 /* ═══════════════ DAILY LOGIN BONUS ═══════════════ */
 function getLoginStreak(){
@@ -5677,113 +5747,191 @@ function checkOnboarding(){
   else if(!done){S('ob_done_'+cu.email,'true');} // Auto-mark done for existing users
 }
 /* ═══════════════ AVATAR CUSTOMIZER ═══════════════ */
-let avState={type:'emoji',emoji:'😎',color:AV_COLORS[0].value,initials:''};
+let avState={type:'emoji',emoji:'😎',color:AV_COLORS[0].value,initials:'',photo:''};
 
 function openAvatarModal(){
-  const saved=getAvatar(cu.email);
-  avState={...saved};
-  if(!avState.color)avState.color=AV_COLORS[0].value;
+  const saved = getAvatar(cu.email);
+  avState = {...saved};
+  if(!avState.color) avState.color = AV_COLORS[0].value;
+  if(!avState.emoji) avState.emoji = '😎';
+  if(!avState.photo) avState.photo = '';
 
-  // Set initials input
-  const name=cu?.name||'';
-  const autoInitials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('avInitialsInp').value=avState.initials||autoInitials;
-  avState.initials=avState.initials||autoInitials;
+  // Auto-initials from name
+  const name = cu?.name||'';
+  const autoIni = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('avInitialsInp').value = avState.initials||autoIni;
+  avState.initials = avState.initials||autoIni;
 
   // Build emoji grid
-  document.getElementById('avEmojiGrid').innerHTML=AV_EMOJIS.map(e=>`
+  document.getElementById('avEmojiGrid').innerHTML = AV_EMOJIS.map(e=>`
     <button class="av-emoji-btn${avState.emoji===e?' selected':''}" onclick="selectAvEmoji('${e}')">${e}</button>
   `).join('');
 
-  // Build color rows
-  ['avColorRowEmoji','avColorRowInitials'].forEach(id=>{
-    document.getElementById(id).innerHTML = AV_COLORS.map((c, i) => `
-  <div class="av-color-dot${avState.color === c.value ? ' selected' : ''}"
-    style="background:${c.value}"
-    title="${c.label}"
-    data-color="${i}"
-    data-row="${id}"
-    onclick="selectAvColorByIndex(${i}, this, '${id}')">
-  </div>`).join('');
+  // Build color rows (both tabs share same colour state)
+  ['avColorRowEmoji','avColorRowInitials'].forEach(rowId=>{
+    document.getElementById(rowId).innerHTML = AV_COLORS.map((c,i)=>`
+      <div class="av-color-dot${avState.color===c.value?' selected':''}"
+        style="background:${c.value}" title="${c.label}"
+        data-color="${i}" data-row="${rowId}"
+        onclick="selectAvColorByIndex(${i},this,'${rowId}')"></div>`).join('');
   });
 
-  switchAvTab(avState.type==='initials'?'initials':'emoji');
+  // Photo panel state
+  _refreshPhotoPanel();
+
+  // Open on the right tab
+  const startTab = avState.type==='initials'?'initials':avState.type==='photo'?'photo':'emoji';
+  switchAvTab(startTab);
   updateAvPreview();
   document.getElementById('avatarModal').classList.add('show');
 }
 
+function _refreshPhotoPanel(){
+  const hasPhoto = !!(avState.photo);
+  document.getElementById('avDropZone').style.display = hasPhoto?'none':'block';
+  document.getElementById('avPhotoPreviewRow').style.display = hasPhoto?'block':'none';
+  if(hasPhoto){
+    document.getElementById('avPhotoThumb').innerHTML =
+      `<img src="${avState.photo}" style="width:100%;height:100%;object-fit:cover"/>`;
+    document.getElementById('avPhotoFileName').textContent = 'Photo uploaded ✓';
+  }
+}
+
+/* Called when user picks a file */
+function handleAvatarPhoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ toast('📸 Photo too large — max 5 MB!','error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    avState.photo = e.target.result;
+    avState.type = 'photo';
+    _refreshPhotoPanel();
+    switchAvTab('photo');
+    updateAvPreview();
+    input.value = ''; // reset so same file can be picked again
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Drag-and-drop support */
+function handleAvatarDrop(e){
+  const file = e.dataTransfer?.files?.[0];
+  if(!file||!file.type.startsWith('image/')) return;
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  const inp = document.getElementById('avPhotoInput');
+  try{ inp.files = dt.files; } catch(_){}
+  handleAvatarPhoto(inp);
+}
+
+/* Remove photo and revert to emoji */
+function clearAvatarPhoto(){
+  avState.photo = '';
+  avState.type = 'emoji';
+  document.getElementById('avPhotoInput').value = '';
+  _refreshPhotoPanel();
+  switchAvTab('emoji');
+  updateAvPreview();
+}
+
 function switchAvTab(tab){
-  avState.type=tab;
-  document.getElementById('avTabEmoji').classList.toggle('active',tab==='emoji');
-  document.getElementById('avTabInitials').classList.toggle('active',tab==='initials');
-  document.getElementById('avEmojiPanel').style.display=tab==='emoji'?'block':'none';
-  document.getElementById('avInitialsPanel').style.display=tab==='initials'?'block':'none';
+  avState.type = tab;
+  // Toggle tab buttons
+  document.getElementById('avTabPhoto').classList.toggle('active', tab==='photo');
+  document.getElementById('avTabEmoji').classList.toggle('active', tab==='emoji');
+  document.getElementById('avTabInitials').classList.toggle('active', tab==='initials');
+  // Show/hide panels
+  document.getElementById('avPhotoPanel').style.display   = tab==='photo'    ? 'block':'none';
+  document.getElementById('avEmojiPanel').style.display   = tab==='emoji'    ? 'block':'none';
+  document.getElementById('avInitialsPanel').style.display= tab==='initials' ? 'block':'none';
   updateAvPreview();
 }
 
 function selectAvEmoji(emoji){
-  avState.emoji=emoji;
+  avState.emoji = emoji;
   document.querySelectorAll('.av-emoji-btn').forEach(b=>{
-    b.classList.toggle('selected',b.textContent===emoji);
+    b.classList.toggle('selected', b.textContent===emoji);
   });
   updateAvPreview();
 }
 
 function updateAvPreview(){
-  const prev=document.getElementById('avPreview');
-  const name=cu?.name||'User';
-  const autoInitials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  const initials=(document.getElementById('avInitialsInp')?.value||autoInitials).toUpperCase().slice(0,2);
-  avState.initials=initials;
+  const prev = document.getElementById('avPreview');
+  if(!prev) return;
+  const name = cu?.name||'User';
+  const autoIni = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const ini = (document.getElementById('avInitialsInp')?.value||autoIni).toUpperCase().slice(0,2);
+  avState.initials = ini;
 
-  prev.style.background=avState.color;
-  if(avState.type==='emoji'){
-    prev.textContent=avState.emoji;
+  prev.innerHTML = '';
+  prev.style.overflow = 'hidden';
+
+  if(avState.type==='photo' && avState.photo){
+    prev.style.background = 'transparent';
+    prev.style.fontSize = '';
+    prev.style.color = '';
+    const img = document.createElement('img');
+    img.src = avState.photo;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+    prev.appendChild(img);
+    prev.classList.remove('initials-mode');
+  } else if(avState.type==='emoji'){
+    prev.style.background = avState.color;
+    prev.style.fontSize = '2.6rem';
+    prev.style.color = '';
+    prev.textContent = avState.emoji;
     prev.classList.remove('initials-mode');
   } else {
-    prev.textContent=initials||autoInitials;
+    prev.style.background = avState.color;
+    prev.style.color = '#fff';
+    prev.textContent = ini||autoIni;
     prev.classList.add('initials-mode');
-    prev.style.color='#fff';
   }
-  document.getElementById('avPreviewName').textContent=name+' · Click Save to apply';
+  document.getElementById('avPreviewName').textContent = name + ' · Tap Save to apply';
 }
 
 function saveAvatarChanges(){
-  const initialsEl=document.getElementById('avInitialsInp');
-  const initials=initialsEl?(initialsEl.value||'').toUpperCase().slice(0,2):'';
-  avState.initials=initials||cu.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  avState.type=avState.type||'emoji';
-  avState.emoji=avState.emoji||'😎';
-  avState.color=avState.color||AV_COLORS[0].value;
-  const toSave={type:avState.type,emoji:avState.emoji,color:avState.color,initials:avState.initials};
+  const iniEl = document.getElementById('avInitialsInp');
+  const ini = (iniEl?iniEl.value||'':'').toUpperCase().slice(0,2);
+  avState.initials = ini || cu.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  avState.type   = avState.type||'emoji';
+  avState.emoji  = avState.emoji||'😎';
+  avState.color  = avState.color||AV_COLORS[0].value;
+
+  const toSave = {
+    type:     avState.type,
+    emoji:    avState.emoji,
+    color:    avState.color,
+    initials: avState.initials,
+    photo:    avState.type==='photo' ? avState.photo : ''
+  };
   saveAvatar(toSave);
+
   closeModal('avatarModal');
-  setTimeout(()=>{updateAllAvatars();refreshLeaderboardAvatars();},100);
+
+  // Immediate update — no setTimeout needed anymore
+  updateAllAvatars();
+  refreshLeaderboardAvatars();
+
   toast('🎨 Avatar updated!','success');
   addXP(5,'Avatar Customized');
   spawnConfetti();
 }
 
 function refreshLeaderboardAvatars(){
-  // Re-render gamify page if active
-  if(document.getElementById('gamifyPage')?.classList.contains('active')){
-  renderGamify();
-}
-if(document.getElementById('friendsPage')?.classList.contains('active')){
-  renderFriends();
-}
+  if(document.getElementById('gamifyPage')?.classList.contains('active')) renderGamify();
+  if(document.getElementById('friendsPage')?.classList.contains('active')) renderFriends();
 }
 
 function selectAvColorByIndex(idx, el, rowId){
   avState.color = AV_COLORS[idx].value;
-  // Current row
-  document.querySelectorAll(`#${rowId} .av-color-dot`)
-    .forEach(d => d.classList.remove('selected'));
+  document.querySelectorAll(`#${rowId} .av-color-dot`).forEach(d=>d.classList.remove('selected'));
   el.classList.add('selected');
-  // Other row sync
-  const otherRow = rowId==='avColorRowEmoji' ? 'avColorRowInitials' : 'avColorRowEmoji';
-  document.querySelectorAll(`#${otherRow} .av-color-dot`)
-    .forEach(d => d.classList.toggle('selected', d.dataset.color === String(idx)));
+  // Sync the other colour row
+  const other = rowId==='avColorRowEmoji'?'avColorRowInitials':'avColorRowEmoji';
+  document.querySelectorAll(`#${other} .av-color-dot`)
+    .forEach(d=>d.classList.toggle('selected', d.dataset.color===String(idx)));
   updateAvPreview();
 }
 
