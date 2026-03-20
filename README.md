@@ -4,9 +4,10 @@ An AI-powered student task manager built by **Prathip Munusamy** & **Sujitha Sha
 
 ---
 
-# Demo Link
+## 🚀 Live Demo
 
-Link : https://smart-student-task-agent.onrender.com/
+🔗 **Try it now:**  
+https://smart-student-task-agent.onrender.com/
 
 ---
 
